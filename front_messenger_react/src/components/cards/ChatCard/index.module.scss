@@ -1,0 +1,173 @@
+@import "../../../variables";
+
+.card {
+  margin: 0;
+  background-color: $color-background;
+  position: relative;
+
+  &_button {
+    cursor: pointer;
+    padding: 0.5625rem;
+
+    width: 100%;
+    height: 100%;
+    background-color: $color-background;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+    color: $color-text-primary;
+    border-radius: 0.75rem;
+    text-decoration: none;
+
+    &:hover {
+      background-color: $color-chat-hover;
+    }
+  }
+
+  &_status {
+    margin: 0;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    position: relative;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    z-index: 8;
+
+    &_avatar {
+      margin-right: 0.5rem;
+      font-size: 1.3125rem;
+      flex: none;
+      align-items: center;
+      justify-content: center;
+      display: flex;
+      width: 3.375rem;
+      height: 3.375rem;
+      border-radius: 50%;
+      color: white;
+      font-weight: bold;
+      white-space: nowrap;
+      user-select: none;
+      position: relative;
+
+      &_inner {
+        overflow: hidden;
+        border-radius: 50%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        z-index: 1;
+        align-items: center;
+        justify-content: center;
+        background-image: linear-gradient(white -125%, green);
+
+        img {
+          vertical-align: middle;
+          border-style: none;
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+  }
+
+  &_info {
+    flex: 1;
+
+    &_row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      overflow: hidden;
+      white-space: nowrap;
+
+      &_title {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        text-align: initial;
+
+        overflow: hidden;
+        unicode-bidi: plaintext;
+        text-overflow: ellipsis;
+        line-height: 1.5rem;
+
+        h3 {
+          margin: 0;
+          font-weight: 500;
+          unicode-bidi: plaintext;
+          font-size: 1rem;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+      }
+
+      &_time_meta {
+        margin-right: 0.1875rem;
+        flex-shrink: 0;
+        font-size: 0.75rem;
+        display: flex;
+        align-items: center;
+
+        .time {
+          color: $color-text-meta;
+        }
+      }
+    }
+
+    &_subtitle {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      overflow: hidden;
+
+      line-height: 1.5rem;
+      text-align: initial;
+      unicode-bidi: plaintext;
+      text-overflow: ellipsis;
+
+      &_last_message {
+        margin: 0;
+
+        text-align: left;
+        padding-right: 0.25rem;
+        position: relative;
+
+        font-size: 1rem;
+        unicode-bidi: plaintext;
+        color: $color-text-secondary;
+
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      &_badge {
+        min-width: 1.5rem;
+        height: 1.5rem;
+        background: rgb(113, 117, 121);
+        border-radius: 0.75rem;
+        padding: 0 0.4375rem;
+        color: #fff;
+        font-size: 0.875rem;
+        line-height: 1.5625rem;
+        font-weight: 500;
+        text-align: center;
+
+        span {
+          display: inline-flex;
+          white-space: pre;
+        }
+      }
+    }
+  }
+}

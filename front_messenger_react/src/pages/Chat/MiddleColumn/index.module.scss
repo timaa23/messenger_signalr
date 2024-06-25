@@ -1,0 +1,30 @@
+@import "../../../variables";
+
+.middle_column {
+  height: 100%;
+  min-width: 0;
+  // overflow: hidden;
+  position: relative;
+
+  &_main {
+    height: 100%;
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    animation-fill-mode: forwards;
+
+    &_header {
+      height: $header-height;
+      padding: 0.375rem 0.8125rem 0.5rem 0.8125rem;
+      display: flex;
+      align-items: center;
+      background-color: $color-background;
+    }
+
+    &_list {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}

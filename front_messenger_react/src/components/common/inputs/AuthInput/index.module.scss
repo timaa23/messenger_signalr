@@ -1,0 +1,96 @@
+@import "../../../../variables";
+
+.field {
+  position: relative;
+
+  label {
+    display: block;
+    padding: 0 0.25rem;
+    position: absolute;
+    left: 0.75rem;
+    top: 0.9375rem;
+    color: $color-text-secondary;
+    background-color: $color-background;
+    font-size: 1rem;
+    font-weight: 400;
+    transition: transform 0.15s ease-out, color 0.15s ease-out;
+    pointer-events: none;
+    transform-origin: left center;
+    white-space: nowrap;
+  }
+
+  input {
+    display: block;
+    overflow: visible;
+    width: 100%;
+    height: 3.375rem;
+    padding: calc(0.75rem - $border-width) calc(0.9rem - $border-width);
+    border: $border-width solid $color-border-input;
+    border-radius: 0.75rem;
+    color: $color-text-primary;
+    background-color: $color-background;
+    outline: none;
+    transition: border-color 0.15s ease;
+    word-break: break-word;
+    font-size: 1rem;
+    line-height: 1.25rem;
+    box-sizing: border-box;
+
+    &:not([type="range"]) {
+      touch-action: manipulation;
+    }
+
+    &:not(:placeholder-shown) {
+      & + label {
+        transform: scale(0.75) translate(-0.5rem, -2.25rem);
+      }
+    }
+
+    &:focus {
+      border-color: $color-primary;
+      box-shadow: inset 0 0 0 1px $color-primary;
+      caret-color: $color-primary;
+
+      & + label {
+        transform: scale(0.75) translate(-0.5rem, -2.25rem);
+        color: $color-primary;
+      }
+    }
+
+    &:hover {
+      border-color: $color-primary;
+
+      & + label {
+        color: $color-primary;
+      }
+    }
+  }
+
+  .error {
+    border-color: $color-error;
+    outline: none;
+    box-shadow: none;
+
+    & + label {
+      color: $color-error;
+    }
+
+    &:hover {
+      border-color: $color-error-secondary;
+
+      & + label {
+        color: $color-error-secondary;
+      }
+    }
+
+    &:focus {
+      border-color: $color-error-secondary;
+      outline-color: $color-error-secondary;
+      box-shadow: inset 0 0 0 1px $color-error-secondary;
+
+      & + label {
+        color: $color-error-secondary;
+      }
+    }
+  }
+}
