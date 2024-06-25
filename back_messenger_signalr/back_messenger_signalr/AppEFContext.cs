@@ -14,6 +14,8 @@ namespace back_messenger_signalr
         { }
 
         public DbSet<MessageEntity> Messages { get; set; }
+        public DbSet<ConversationEntity> Conversations { get; set; }
+        public DbSet<ParticipantEntity> Participants { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -46,7 +48,7 @@ namespace back_messenger_signalr
                 .WithMany(c => c.Messages)
                 .HasForeignKey(f => f.ConversationId)
                 .IsRequired();
-            
+
             builder.Entity<ParticipantEntity>()
                 .HasOne(p => p.User)
                 .WithMany(s => s.Participants)
@@ -75,6 +77,9 @@ namespace back_messenger_signalr
             // Other properties
             builder.Entity<MessageEntity>()
                 .Property(m => m.MessageType)
+                .HasConversion<string>();
+            builder.Entity<ConversationEntity>()
+                .Property(m => m.ConversationType)
                 .HasConversion<string>();
         }
     }

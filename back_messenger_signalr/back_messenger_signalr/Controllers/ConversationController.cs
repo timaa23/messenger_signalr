@@ -2,22 +2,32 @@
 using back_messenger_signalr.Models.Conversation;
 using back_messenger_signalr.Services.Classess;
 using back_messenger_signalr.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace back_messenger_signalr.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ConversationController : ControllerBase
     {
-        private readonly UserManager<UserEntity> _userManager;
         private readonly IConversationService _conversationService;
-        public ConversationController(UserManager<UserEntity> userManager, IConversationService conversationService)
+        public ConversationController(IConversationService conversationService)
         {
-            _userManager = userManager;
             _conversationService = conversationService;
+        }
+
+        [HttpGet]
+        [Route("get_users")]
+        public async Task<IActionResult> GetByGuidAsync()
+        {
+            var userId = User.FindFirst("id").Value;
+
+            var result = await _conversationService.GetConversationsByUserIdAsync(userId);
+            return SendResponse(result);
         }
 
         [HttpGet]
@@ -32,10 +42,7 @@ namespace back_messenger_signalr.Controllers
         [Route("create")]
         public async Task<IActionResult> CreateAsync([FromBody] ConversationCreateViewModel model)
         {
-            var user1 = await _userManager.FindByIdAsync(model.CreatorId);
-            var user2 = await _userManager.FindByIdAsync(model.ParticipantId);
-
-            var result = await _conversationService.CreateConversationAsync(user1, user2);
+            var result = await _conversationService.CreateConversationAsync(model);
             return SendResponse(result);
         }
 

@@ -30,6 +30,23 @@ namespace back_messenger_signalr.Controllers
             return SendResponse(result);
         }
 
+        [HttpGet]
+        [Route("get_identity")]
+        public async Task<IActionResult> GetIdentityAsync()
+        {
+            var id = User.FindFirst("id").Value;
+
+            var result = new ServiceResponse
+            {
+                IsSuccess = true,
+                Message = "Identity",
+                Payload = id
+            };
+            return SendResponse(result);
+        }
+
+        // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQiLCJ1c2VyTmFtZSI6ImFkbWluIiwiaW1hZ2UiOiJodHRwczovL3d3dy5ncmF2YXRhci5jb20vYXZhdGFyLz9kPW1wIiwicm9sZXMiOiJhZG1pbiIsImV4cCI6MTcxOTk1NTE5MywiaXNzIjoiVGltYS0wMTYwIn0.MnHd0BH3QYL6nji_UQmobCd0cVJLsxRpjFFJm_SxIeY
+
         private IActionResult SendResponse(ServiceResponse response)
         {
             if (response.IsSuccess)

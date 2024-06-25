@@ -1,4 +1,5 @@
 ﻿using back_messenger_signalr.Models.Account;
+using back_messenger_signalr.Models.Message;
 using back_messenger_signalr.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,10 +17,18 @@ namespace back_messenger_signalr.Controllers
         }
 
         [HttpGet]
-        [Route("get")]
-        public async Task<IActionResult> LoginAsync(string guid)
+        [Route("get/conversation/{guid}")]
+        public async Task<IActionResult> GetByConversationGuidAsync(Guid guid)
         {
             var result = await _messageService.GetMessagesByConversationGuid(guid);
+            return SendResponse(result);
+        }
+        
+        [HttpPost]
+        [Route("send")]
+        public async Task<IActionResult> SendAsync([FromBody] MessageSendViewModel model)
+        {
+            var result = await _messageService.SendMessage(model);
             return SendResponse(result);
         }
 

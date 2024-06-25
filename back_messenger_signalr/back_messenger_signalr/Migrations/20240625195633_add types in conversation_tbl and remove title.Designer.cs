@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using back_messenger_signalr;
@@ -11,9 +12,11 @@ using back_messenger_signalr;
 namespace back_messenger_signalr.Migrations
 {
     [DbContext(typeof(AppEFContext))]
-    partial class AppEFContextModelSnapshot : ModelSnapshot
+    [Migration("20240625195633_add types in conversation_tbl and remove title")]
+    partial class addtypesinconversation_tblandremovetitle
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
