@@ -21,8 +21,8 @@ namespace back_messenger_signalr.Controllers
         }
 
         [HttpGet]
-        [Route("get_users")]
-        public async Task<IActionResult> GetByGuidAsync()
+        [Route("get_user_conversations")]
+        public async Task<IActionResult> GetUserConversationsAsync()
         {
             var userId = User.FindFirst("id").Value;
 

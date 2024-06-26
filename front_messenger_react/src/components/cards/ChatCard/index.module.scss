@@ -68,7 +68,7 @@
         z-index: 1;
         align-items: center;
         justify-content: center;
-        background-image: linear-gradient(white -125%, green);
+        background-image: linear-gradient(white -125%, purple);
 
         img {
           vertical-align: middle;
@@ -149,6 +149,11 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+
+        .sender_name {
+          color: $color-text-primary;
+          margin-inline-end: 0.1875rem;
+        }
       }
 
       &_badge {

@@ -9,7 +9,7 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<DefaultLayout />}>
-          <Route index element={<ChatPage />} />
+          <Route path=":guid?" element={<ChatPage />} />
         </Route>
         <Route path="/auth" element={<AuthLayout />}>
           <Route index element={<AuthPage />} />

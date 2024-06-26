@@ -1,3 +1,25 @@
+export enum MessageTypes {
+  Text,
+  File,
+  Image,
+  Video,
+}
+
+export interface IMessageItem {
+  senderId: number;
+  message: string;
+  conversationGuid: string;
+  messageType: MessageTypes;
+  dateTime: Date;
+}
+
+export interface IMessageSendItem {
+  senderId: number;
+  message: string;
+  conversationGuid: string;
+  messageType: MessageTypes;
+}
+
 export interface IReceiveMessageType {
   user_name: string;
   message: string;

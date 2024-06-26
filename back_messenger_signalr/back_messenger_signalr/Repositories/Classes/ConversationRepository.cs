@@ -26,14 +26,19 @@ namespace back_messenger_signalr.Repositories.Classes
         {
             int.TryParse(userId, out var id);
 
-            var conversations = Conversations
-                .Where(c => c.Participants.Any(p => p.UserId == id))
-                .Select(c => new ConversationsViewModel
+            var result = _dbContext.Conversations
+                .Where(c => c.Participants.Any(p => p.UserId.Equals(id)))
+                .Select(c => new
                 {
-                    Guid = c.Guid,
-                    Name = c.ConversationType == ConversationTypes.Group ? c.Name
-                            : c.Participants.Where(p => p.UserId != id).Select(p => p.Name).FirstOrDefault(),
-                    Image = c.Participants.Where(p => p.UserId != id).Select(p => p.User.Image).FirstOrDefault(),
+                    c.Guid,
+                    c.Name,
+                    c.ConversationType,
+                    OtherParticipant = c.Participants.Where(p => !p.UserId.Equals(id))
+                    .Select(p => new
+                    {
+                        p.Name,
+                        p.User.Image
+                    }).FirstOrDefault(),
                     LastMessage = c.Messages.OrderByDescending(m => m.DateCreated)
                     .Select(m => new MessageViewModel
                     {
@@ -41,14 +46,18 @@ namespace back_messenger_signalr.Repositories.Classes
                         ConversationGuid = m.Conversation.Guid,
                         SenderId = m.SenderId,
                         MessageType = m.MessageType,
-                        DateTime = m.DateCreated
-                    })
-                    .Take(1)
-                    .FirstOrDefault()
+                        DateTime = m.DateCreated,
+                    }).FirstOrDefault()
                 })
-                .AsNoTracking();
+                .Select(c => new ConversationsViewModel
+                {
+                    Guid = c.Guid,
+                    Name = c.ConversationType == ConversationTypes.Group ? c.Name : c.OtherParticipant.Name,
+                    Image = c.OtherParticipant.Image,
+                    LastMessage = c.LastMessage,
+                }).AsNoTracking();
 
-            return conversations;
+            return result;
         }
 
         public async Task<ConversationEntity> CreateConversationAsync(IEnumerable<UserEntity> participants)
