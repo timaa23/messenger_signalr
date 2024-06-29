@@ -1,4 +1,6 @@
-﻿using back_messenger_signalr.Entities;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using back_messenger_signalr.Entities;
 using back_messenger_signalr.Models.Message;
 using back_messenger_signalr.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -8,40 +10,54 @@ namespace back_messenger_signalr.Repositories.Classes
     public class MessageRepository : GenericRepository<MessageEntity, int>, IMessageRepository
     {
         private readonly AppEFContext _dbContext;
-        public MessageRepository(AppEFContext dbContext)
+        private readonly IMapper _mapper;
+        public MessageRepository(AppEFContext dbContext, IMapper mapper)
             : base(dbContext)
         {
             _dbContext = dbContext;
+            _mapper = mapper;
         }
 
-        public IQueryable<MessageEntity> Messages => GetAll()
+        public IQueryable<MessageEntity> MessagesEager => GetAll()
             .Include(m => m.Sender)
             .Include(m => m.Conversation)
+            .ThenInclude(c => c.Participants)
             .AsNoTracking();
 
-        public IQueryable<MessageViewModel> GetMessagesByConversationGuid(Guid conversationGuid)
+        public IQueryable<MessageViewModel> GetMessagesByConversationGuid(Guid conversationGuid, string userId)
         {
-            return Messages.Where(m => m.Conversation.Guid.Equals(conversationGuid)).Select(m => new MessageViewModel
+            var messages = GetAll().Where(m => m.Conversation.Guid.Equals(conversationGuid));
+
+            if (!IsUserInConversation(messages, userId))
             {
-                Message = m.Body,
-                ConversationGuid = m.Conversation.Guid,
-                SenderId = m.SenderId,
-                MessageType = m.MessageType,
-                DateTime = m.DateCreated
-            }).AsNoTracking();
+                throw new AccessViolationException("User is not member of this conversation.");
+            }
+
+            var result = messages
+                .OrderByDescending(m => m.DateCreated)
+                .ProjectTo<MessageViewModel>(_mapper.ConfigurationProvider)
+                .AsNoTracking();
+
+            return result;
         }
 
-        public async Task<MessageEntity> SendMessage(MessageSendViewModel model)
+        public async Task<MessageViewModel> SendMessage(MessageSendViewModel model, string userId)
         {
-            var conversation = await _dbContext.Set<ConversationEntity>()
+            var conversation = await _dbContext.Conversations
+                .Where(c => c.IsDeleted == false)
+                .Include(c => c.Participants)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.Guid.Equals(model.ConversationGuid));
 
-            if (conversation == null) throw new Exception("Conversation is undefined");
+            int.TryParse(userId, out var userIdNum);
+
+            if (conversation == null) throw new Exception("Conversation is undefined.");
+
+            if (!conversation.Participants.Any(p => p.UserId.Equals(userIdNum))) throw new Exception("User is not member of this conversation.");
 
             var message = new MessageEntity
             {
-                SenderId = model.SenderId,
+                SenderId = userIdNum,
                 ConversationId = conversation.Id,
                 Body = model.Message,
                 MessageType = model.MessageType,
@@ -58,7 +74,15 @@ namespace back_messenger_signalr.Repositories.Classes
                 throw;
             }
 
-            return message;
+            return _mapper.Map<MessageViewModel>(message,
+                opts => opts.AfterMap((dest, opt) => opt.ConversationGuid = model.ConversationGuid));
+        }
+
+        private bool IsUserInConversation(IQueryable<MessageEntity> messages, string userId)
+        {
+            int.TryParse(userId, out var id);
+
+            return messages.Select(m => m.Conversation).Any(c => c.Participants.Any(p => p.UserId == id));
         }
     }
 }

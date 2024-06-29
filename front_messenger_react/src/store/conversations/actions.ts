@@ -6,7 +6,7 @@ import ServiceResponse from "../../ServiceResponse";
 export const GetConversations = () => async (dispatch: Dispatch<ConversationActions>) => {
   try {
     const resp = await http.get<ServiceResponse<Array<IConversationItem>>>(
-      `/api/Conversation/get_user_conversations`
+      `/api/Conversation/get/user`
     );
 
     const { data } = resp;
@@ -16,7 +16,7 @@ export const GetConversations = () => async (dispatch: Dispatch<ConversationActi
       payload: { conversations: data.payload },
     });
 
-    console.log("CONVERSATIONS", data);
+    console.log("CONVERSATION ACTION", data);
 
     return Promise.resolve(data);
   } catch (error: any) {

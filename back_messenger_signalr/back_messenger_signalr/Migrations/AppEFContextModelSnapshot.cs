@@ -132,6 +132,10 @@ namespace back_messenger_signalr.Migrations
                     b.Property<Guid>("Guid")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Image")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
@@ -290,6 +294,9 @@ namespace back_messenger_signalr.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsRead")
                         .HasColumnType("boolean");
 
                     b.Property<string>("MessageType")

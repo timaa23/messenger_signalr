@@ -1,19 +1,28 @@
 ﻿using back_messenger_signalr.Helpers;
 using back_messenger_signalr.Models;
+using back_messenger_signalr.Models.Message;
+using back_messenger_signalr.Repositories.Interfaces;
+using back_messenger_signalr.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace back_messenger_signalr.Hubs
 {
     [Authorize]
     public class ChatHub : Hub<IChatClient>
     {
+        private readonly IMessageService _messageService;
+        private readonly IConversationRepository _conversationRepository;
         private readonly IDictionary<string, UserRoomConnection> _connections;
         private readonly OnlineDB _onlineDB;
-        public ChatHub(IDictionary<string, UserRoomConnection> connections, OnlineDB onlineDB)
+        public ChatHub(IDictionary<string, UserRoomConnection> connections, OnlineDB onlineDB, IMessageService messageService, IConversationRepository conversationRepository)
         {
             _connections = connections;
             _onlineDB = onlineDB;
+            _messageService = messageService;
+            _conversationRepository = conversationRepository;
         }
 
         public override Task OnConnectedAsync()
@@ -25,34 +34,51 @@ namespace back_messenger_signalr.Hubs
             return base.OnConnectedAsync();
         }
 
-        public async Task TestAsync(UserRoomConnection connection)
+        public async Task<bool> TestAsync(string message, Guid guid)
         {
             var user = Context.UserIdentifier;
 
-            await Clients.All.ReceiveMessage(connection.User!, $"{connection.User} with userName {user}", DateTime.Now);
+            var participants = await _conversationRepository.GetAll()
+                .Where(c => c.Guid.Equals(guid))
+                .Select(c => c.Participants)
+                .FirstOrDefaultAsync();
+
+            foreach (var participant in participants)
+                await Clients.User(Convert.ToString(participant.UserId)).ReceiveMessage(message, $"#{user} send: {message}", DateTime.Now);
+
+            return true;
         }
 
         public override Task OnDisconnectedAsync(Exception? exception)
         {
-            if (!_connections.TryGetValue(Context.ConnectionId, out var user_room))
-            {
-                return base.OnDisconnectedAsync(exception);
-            }
+            var userID = Context.UserIdentifier;
 
-            Clients.Group(user_room.Room!).ReceiveMessage(user_room.User!, $"{user_room.User} has been disconnected", DateTime.Now);
-
-            _connections.Remove(Context.ConnectionId);
-            SendConnectedUsers(user_room.Room!);
+            Console.WriteLine($"USER WITH ID: #{userID} HAS BEEN DISCONNECTED");
 
             return base.OnDisconnectedAsync(exception);
         }
 
-        public async Task SendMessage(string message)
+        public async Task<ServiceResponse<MessageViewModel>> SendMessage(MessageSendViewModel model)
         {
-            if (_connections.TryGetValue(Context.ConnectionId, out var user_room))
+            var userId = Context.UserIdentifier;
+
+            var participants = await _conversationRepository.GetAll()
+                .Where(c => c.Guid.Equals(model.ConversationGuid))
+                .Select(c => c.Participants)
+                .FirstOrDefaultAsync();
+
+            var message = await _messageService.SendMessageAsync(model, userId);
+
+            if (!message.IsSuccess) return message;
+
+            foreach (var participant in participants)
             {
-                await Clients.Group(user_room.Room!).ReceiveMessage(user_room.User!, message, DateTime.Now);
+                string participantIdString = Convert.ToString(participant.UserId);
+
+                await Clients.User(participantIdString).ReceiveMessage(message);
             }
+
+            return message;
         }
 
         public Task SendConnectedUsers(string room)

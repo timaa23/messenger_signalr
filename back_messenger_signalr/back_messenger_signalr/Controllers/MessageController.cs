@@ -1,6 +1,8 @@
-﻿using back_messenger_signalr.Models.Account;
+﻿using back_messenger_signalr.Helpers;
+using back_messenger_signalr.Models.Account;
 using back_messenger_signalr.Models.Message;
 using back_messenger_signalr.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,29 +18,27 @@ namespace back_messenger_signalr.Controllers
             _messageService = messageService;
         }
 
+        [Authorize]
         [HttpGet]
-        [Route("get/conversation/{guid}")]
+        [Route("get/conversationGuid/{guid}")]
         public async Task<IActionResult> GetByConversationGuidAsync(Guid guid)
         {
-            var result = await _messageService.GetMessagesByConversationGuid(guid);
-            return SendResponse(result);
+            var userId = User.FindFirst("id").Value;
+
+            var result = await _messageService.GetMessagesByConversationGuid(guid, userId);
+
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
-        
+
         [HttpPost]
         [Route("send")]
         public async Task<IActionResult> SendAsync([FromBody] MessageSendViewModel model)
         {
-            var result = await _messageService.SendMessage(model);
-            return SendResponse(result);
-        }
+            var userId = User.FindFirst("id").Value;
 
-        private IActionResult SendResponse(ServiceResponse response)
-        {
-            if (response.IsSuccess)
-            {
-                return Ok(response);
-            }
-            return BadRequest(response);
+            var result = await _messageService.SendMessageAsync(model, userId);
+
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }
 }

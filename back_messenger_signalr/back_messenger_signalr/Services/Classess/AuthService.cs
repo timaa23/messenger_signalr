@@ -3,26 +3,25 @@ using back_messenger_signalr.Entities.Identity;
 using back_messenger_signalr.Models.Account;
 using back_messenger_signalr.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
 
 namespace back_messenger_signalr.Services.Classess
 {
-    public class AccountService : IAccountService
+    public class AuthService : IAuthService
     {
         private readonly UserManager<UserEntity> _userManager;
         private readonly IJwtTokenService _jwtTokenService;
-        public AccountService(UserManager<UserEntity> userManager, IJwtTokenService jwtTokenService)
+        public AuthService(UserManager<UserEntity> userManager, IJwtTokenService jwtTokenService)
         {
             _userManager = userManager;
             _jwtTokenService = jwtTokenService;
         }
 
-        public async Task<ServiceResponse> LoginAsync(LoginViewModel model)
+        public async Task<ServiceResponse<string>> LoginAsync(LoginViewModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
-                return new ServiceResponse
+                return new ()
                 {
                     IsSuccess = false,
                     Message = "No user is associated with this email"
@@ -32,7 +31,7 @@ namespace back_messenger_signalr.Services.Classess
             bool checkPassword = await _userManager.CheckPasswordAsync(user, model.Password);
             if (!checkPassword)
             {
-                return new ServiceResponse
+                return new ()
                 {
                     IsSuccess = false,
                     Message = "Incorrect password"
@@ -40,20 +39,19 @@ namespace back_messenger_signalr.Services.Classess
             }
 
             string token = await _jwtTokenService.CreateTokenAsync(user);
-            return new ServiceResponse
+            return new ()
             {
-                IsSuccess = true,
                 Message = "Success",
                 Payload = token
             };
         }
 
-        public async Task<ServiceResponse> RegistrationAsync(RegistrationViewModel model)
+        public async Task<ServiceResponse<string>> RegisterAsync(RegisterViewModel model)
         {
             UserEntity user = await _userManager.FindByEmailAsync(model.Email);
             if (user != null)
             {
-                return new ServiceResponse
+                return new ()
                 {
                     IsSuccess = false,
                     Message = "Email has already used"
@@ -70,7 +68,7 @@ namespace back_messenger_signalr.Services.Classess
             var userCreate = await _userManager.CreateAsync(user, model.Password);
             if (!userCreate.Succeeded)
             {
-                return new ServiceResponse
+                return new ()
                 {
                     IsSuccess = false,
                     Message = "Registration failed"
@@ -80,9 +78,8 @@ namespace back_messenger_signalr.Services.Classess
             await _userManager.AddToRoleAsync(user, Roles.User);
             string token = await _jwtTokenService.CreateTokenAsync(user);
 
-            return new ServiceResponse
+            return new ()
             {
-                IsSuccess = true,
                 Message = "Success",
                 Payload = token
             };

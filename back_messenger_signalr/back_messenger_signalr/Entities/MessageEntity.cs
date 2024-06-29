@@ -21,6 +21,7 @@ namespace back_messenger_signalr.Entities
         public ConversationEntity Conversation { get; set; }
 
         public string Body { get; set; }
+        public bool IsRead { get; set; } = false;
         public MessageTypes MessageType { get; set; }
         public Guid Guid { get; set; } = Guid.NewGuid();
     }

@@ -4,15 +4,25 @@ $color-text-secondary: rgb(170, 170, 170);
 $color-background: rgb(33, 33, 33);
 $theme-background-color: #0f0f0f;
 
+$color-message-meta: rgb(104, 108, 114);
+$color-message-meta-own: rgb(255, 255, 255, 0.533);
+
 $border-width: 1px;
+
+$border-radius-default: 0.75rem;
 
 $color-primary: rgb(135, 116, 225);
 $color-primary-dark: rgb(120, 100, 221);
 
 $color-border-input: rgb(91, 91, 90);
 
+$color-default-shadow: rgb(16, 16, 16, 0.612);
+$color-light-shadow: rgb(0, 0, 0, 0.251);
+
 $color-text-meta: #686c72;
 $color-chat-hover: rgb(44, 44, 44);
+
+$color-text-input-button: rgb(170, 170, 170, 0.8);
 
 $color-error: #cc1d33;
 $color-error-secondary: #e84853;
@@ -24,3 +34,5 @@ $font-family-monospace: "Cascadia Mono", "Roboto Mono", "Droid Sans Mono", "SF M
   "Menlo", "Ubuntu Mono", "Consolas", monospace;
 
 $header-height: 3.5rem;
+
+$message-contrainer-width: 45.5rem;

@@ -13,7 +13,7 @@ namespace back_messenger_signalr.Repositories.Classes
             _dbContext = dbContext;
         }
 
-        public IQueryable<ParticipantEntity> Participants => GetAll()
+        public IQueryable<ParticipantEntity> ParticipantsEager => GetAll()
             .Include(p => p.User)
             .Include(p => p.Conversation)
             .AsNoTracking();

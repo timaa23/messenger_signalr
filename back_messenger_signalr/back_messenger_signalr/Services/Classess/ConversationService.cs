@@ -21,28 +21,50 @@ namespace back_messenger_signalr.Services.Classess
             _userManager = userManager;
         }
 
-        public async Task<ServiceResponse> GetConversationsByUserIdAsync(string userId)
+        public async Task<ServiceResponse<List<ConversationViewModel>>> GetConversationsByUserIdAsync(string userId)
         {
             var result = await _conversationRepository.GetConversationsByUserIdAsync(userId).ToListAsync();
 
-            return new ServiceResponse { IsSuccess = true, Message = "Success", Payload = result };
+            return new()
+            {
+                Message = "Success",
+                Payload = result
+            };
         }
 
-        public async Task<ServiceResponse> GetConversationByGuidAsync(Guid guid)
+        public async Task<ServiceResponse<ConversationViewModel>> GetConversationByGuidAsync(Guid guid, string userId)
         {
-            var result = await _conversationRepository.GetConversationByGuidAsync(guid);
-
-            return new ServiceResponse { IsSuccess = true, Message = "Success", Payload = result };
+            try
+            {
+                var result = await _conversationRepository.GetConversationByGuidAsync(guid, userId);
+                return new()
+                {
+                    Message = "Success",
+                    Payload = result
+                };
+            }
+            catch (Exception ex)
+            {
+                return new()
+                {
+                    IsSuccess = false,
+                    Message = $"Error: {ex.Message}"
+                };
+            }
         }
 
-        public async Task<ServiceResponse> CreateConversationAsync(ConversationCreateViewModel model)
+        public async Task<ServiceResponse<ConversationViewModel>> CreateConversationAsync(ConversationCreateViewModel model)
         {
             var creator = await _userManager.FindByIdAsync(model.CreatorId);
             var participant = await _userManager.FindByIdAsync(model.ParticipantId);
 
             if (creator == null || participant == null)
             {
-                return new ServiceResponse { IsSuccess = false, Message = "Undefined users" };
+                return new()
+                {
+                    IsSuccess = false,
+                    Message = "Undefined users"
+                };
             }
 
             var participants = new List<UserEntity>(new[] { creator, participant });
@@ -50,11 +72,19 @@ namespace back_messenger_signalr.Services.Classess
             try
             {
                 var result = await _conversationRepository.CreateConversationAsync(participants);
-                return new ServiceResponse { IsSuccess = true, Message = "Success", Payload = result };
+                return new()
+                {
+                    Message = "Success",
+                    Payload = result
+                };
             }
             catch (Exception ex)
             {
-                return new ServiceResponse { IsSuccess = false, Message = $"Error: {ex.Message}" };
+                return new()
+                {
+                    IsSuccess = false,
+                    Message = $"Error: {ex.Message}"
+                };
             }
         }
     }

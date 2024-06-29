@@ -1,22 +1,25 @@
-import { IReceiveMessageState, MessageActionTypes, MessageActions } from "./types";
+import { IMessageState, MessageActionTypes, MessageActions } from "./types";
 
-const initialState: IReceiveMessageState = {
-  last_message: {
-    message: "",
-    user_name: "",
-    date_time: "",
-  },
+const initialState: IMessageState = {
+  loading: false,
+  messages: [],
 };
 
 export const MessageReducer = (
   state = initialState,
   action: MessageActions
-): IReceiveMessageState => {
+): IMessageState => {
   switch (action.type) {
-    case MessageActionTypes.SET_LAST_MESSAGE: {
+    case MessageActionTypes.SET_MESSAGE_PAGE: {
       return {
         ...state,
         ...action.payload,
+      };
+    }
+    case MessageActionTypes.SEND_MESSAGE_HTTP: {
+      return {
+        ...state,
+        messages: [action.payload.message, ...state.messages],
       };
     }
     default:

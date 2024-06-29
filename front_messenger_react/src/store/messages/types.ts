@@ -8,35 +8,40 @@ export enum MessageTypes {
 export interface IMessageItem {
   senderId: number;
   message: string;
+  guid: string;
   conversationGuid: string;
   messageType: MessageTypes;
   dateTime: Date;
 }
 
 export interface IMessageSendItem {
-  senderId: number;
+  // senderId: number;
   message: string;
   conversationGuid: string;
   messageType: MessageTypes;
 }
 
-export interface IReceiveMessageType {
-  user_name: string;
-  message: string;
-  date_time: string;
-}
-
-export interface IReceiveMessageState {
-  last_message: IReceiveMessageType;
+export interface IMessageState {
+  loading: boolean;
+  messages: Array<IMessageItem>;
 }
 
 export enum MessageActionTypes {
-  SET_LAST_MESSAGE = "SET_LAST_MESSAGE",
+  SET_MESSAGE_PAGE = "SET_MESSAGE_PAGE",
+  SEND_MESSAGE_HTTP = "SEND_MESSAGE_HTTP",
+
+  //IN PROGRESS
+  SEND_MESSAGE = "SEND_MESSAGE",
 }
 
-export interface SetLastMessageAction {
-  type: MessageActionTypes.SET_LAST_MESSAGE;
-  payload: IReceiveMessageState;
+export interface SetMessagePageAction {
+  type: MessageActionTypes.SET_MESSAGE_PAGE;
+  payload: IMessageState;
 }
 
-export type MessageActions = SetLastMessageAction;
+export interface SendMessageAction {
+  type: MessageActionTypes.SEND_MESSAGE_HTTP;
+  payload: { message: IMessageItem };
+}
+
+export type MessageActions = SetMessagePageAction | SendMessageAction;

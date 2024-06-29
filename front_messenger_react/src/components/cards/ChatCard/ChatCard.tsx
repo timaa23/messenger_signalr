@@ -8,7 +8,7 @@ interface ChatCardProps {
   title: string;
   time?: Date;
   lastMessage?: string;
-  badgeNumber: number;
+  badgeNumber?: number;
   image?: string;
   senderId?: number;
   clickCallback(guid: string): void;
@@ -35,35 +35,35 @@ const ChatCard: React.FC<ChatCardProps> = ({
       <div onClick={() => onClickHandle()} className={styles.card}>
         <div className={styles.card_button}>
           <div className={styles.card_status}>
-            <div className={styles.card_status_avatar}>
-              <div className={styles.card_status_avatar_inner}>
+            <div className={styles.avatar}>
+              <div className={styles.avatar_inner}>
                 {image ? <img src={image} alt="pfp" /> : title[0]}
               </div>
             </div>
           </div>
           <div className={styles.card_info}>
-            <div className={styles.card_info_row}>
-              <div className={styles.card_info_row_title}>
+            <div className={styles.row}>
+              <div className={styles.row_title}>
                 <h3>{title}</h3>
               </div>
-              <div className={styles.card_info_row_time_meta}>
-                <span className={styles.time}>{moment(time).format("hh:mm")}</span>
+              <div className={styles.row_time_meta}>
+                <span className={styles.time}>{time && moment(time).format("LT")}</span>
               </div>
             </div>
-            <div className={styles.card_info_subtitle}>
-              <p className={styles.card_info_subtitle_last_message}>
+            <div className={styles.subtitle}>
+              <p className={styles.subtitle_last_message}>
                 {user?.id == senderId && (
                   <span className={styles.sender_name}>You: </span>
                 )}
                 <span>{lastMessage ?? "No messages here yet..."}</span>
               </p>
-              {badgeNumber > 0 && (
+              {badgeNumber && badgeNumber > 0 ? (
                 <div>
-                  <div className={styles.card_info_subtitle_badge}>
+                  <div className={styles.subtitle_badge}>
                     <span>{badgeNumber}</span>
                   </div>
                 </div>
-              )}
+              ) : null}
             </div>
           </div>
         </div>

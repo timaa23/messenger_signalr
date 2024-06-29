@@ -14,11 +14,11 @@ import setAuthToken from "../../helpers/setAuthToken";
 export const Login =
   (user: ILoginCredentials) => async (dispatch: Dispatch<AuthActions>) => {
     try {
-      const resp = await http.post<ServiceResponse<string>>("api/Account/login", user);
+      const resp = await http.post<ServiceResponse<string>>("api/Auth/login", user);
 
       const { data } = resp;
 
-      console.log("login action", resp);
+      console.log("LOGIN ACTION", resp);
 
       setAuthUserByToken(data.payload, dispatch);
     } catch (error: any) {
@@ -29,10 +29,7 @@ export const Login =
 export const Register =
   (user: IRegisterCredentials) => async (dispatch: Dispatch<AuthActions>) => {
     try {
-      const resp = await http.post<ServiceResponse<string>>(
-        "api/Account/registration",
-        user
-      );
+      const resp = await http.post<ServiceResponse<string>>("api/Auth/register", user);
 
       const { data } = resp;
 

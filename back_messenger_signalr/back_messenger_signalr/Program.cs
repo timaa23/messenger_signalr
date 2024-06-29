@@ -84,9 +84,12 @@ builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
 
 // Add services to the container.
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
-builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IConversationService, ConversationService>();
+
+// Add AutoMapper
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
