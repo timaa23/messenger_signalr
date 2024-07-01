@@ -7,9 +7,9 @@ namespace back_messenger_signalr.Repositories.Interfaces
     public interface IConversationRepository : IGenericRepository<ConversationEntity, int>
     {
         IQueryable<ConversationEntity> ConversationsEager { get; }
-        IQueryable<ConversationViewModel> GetConversationsByUserIdAsync(string userId);
-        Task<ConversationViewModel> GetConversationByGuidAsync(Guid conversationGuid, string userId);
+        IQueryable<ConversationEntity> GetConversationsByUserIdAsync(int userId);
+        IQueryable<ConversationEntity> GetConversationByGuidAsync(Guid conversationGuid);
 
-        Task<ConversationViewModel> CreateConversationAsync(IEnumerable<UserEntity> participants);
+        Task<ConversationEntity> CreateConversationAsync(ConversationCreateViewModel model);
     }
 }

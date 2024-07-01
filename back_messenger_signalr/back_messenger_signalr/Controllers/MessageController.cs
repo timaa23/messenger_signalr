@@ -1,9 +1,6 @@
-﻿using back_messenger_signalr.Helpers;
-using back_messenger_signalr.Models.Account;
-using back_messenger_signalr.Models.Message;
+﻿using back_messenger_signalr.Models.Message;
 using back_messenger_signalr.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace back_messenger_signalr.Controllers

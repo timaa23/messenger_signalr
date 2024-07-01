@@ -43,7 +43,7 @@ namespace back_messenger_signalr.Controllers
 
         [HttpPost]
         [Route("create")]
-        public async Task<IActionResult> CreateAsync([FromBody] ConversationCreateViewModel model)
+        public async Task<IActionResult> CreateAsync([FromForm] ConversationCreateViewModel model)
         {
             var result = await _conversationService.CreateConversationAsync(model);
 

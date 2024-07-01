@@ -2,6 +2,7 @@ import { IMessageItem, IMessageState, MessageActionTypes, MessageActions } from 
 
 const initialState: IMessageState = {
   // loading: false,
+  conversationGuid: "",
   messages: [],
 };
 
@@ -23,8 +24,10 @@ export const MessageReducer = (
       };
     }
     case MessageActionTypes.RECEIVE_MESSAGE: {
-      const { messages } = state;
+      const { messages, conversationGuid } = state;
       const { message } = action.payload;
+
+      if (message.conversationGuid !== conversationGuid) return { ...state };
 
       setReceivedMessage(messages, message);
 
@@ -38,14 +41,11 @@ export const MessageReducer = (
     }
     case MessageActionTypes.SEND_MESSAGE_SUCCESS: {
       const { messages } = state;
-      const { message, oldGuid } = action.payload;
+      const { tempMessageGuid } = action.payload;
 
-      setReceivedMessage(messages, message);
-      removePendingMessage(messages, oldGuid);
+      removePendingMessage(messages, tempMessageGuid);
 
-      return {
-        ...state,
-      };
+      return { ...state };
     }
     default:
       return state;

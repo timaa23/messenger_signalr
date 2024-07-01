@@ -126,7 +126,6 @@ builder.Services.AddSwaggerGen(opt =>
 builder.Services.AddSignalR(hubOpt => hubOpt.EnableDetailedErrors = true);
 
 // Add singleton
-builder.Services.AddSingleton<IDictionary<string, UserRoomConnection>>(opt => new Dictionary<string, UserRoomConnection>());
 builder.Services.AddSingleton<OnlineDB>();
 builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 

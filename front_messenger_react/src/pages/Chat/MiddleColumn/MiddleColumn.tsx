@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useActions } from "../../../hooks/useActions";
 import styles from "./index.module.scss";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
 import MessageCard from "../../../components/cards/MessageCard/MessageCard";
 import classNames from "classnames";
@@ -19,6 +19,8 @@ const MiddleColumn = () => {
 
   const navigator = useNavigate();
 
+  const scrollToRef = useRef<HTMLDivElement>(null);
+
   const LoadMessages = async () => {
     try {
       await SetMessagePage(guid ?? "");
@@ -32,6 +34,10 @@ const MiddleColumn = () => {
   useEffect(() => {
     LoadMessages();
   }, [guid]);
+
+  useEffect(() => {
+    scrollToRef.current?.scrollIntoView();
+  }, [messages]);
 
   const onSubmitHandler = async (model: IMessageSendItem) => {
     setFieldValue("message", "");
@@ -78,6 +84,7 @@ const MiddleColumn = () => {
                 />
               ))}
             </div>
+            <div ref={scrollToRef} />
           </div>
           <div className={styles.middle_column_main_footer}>
             <form onSubmit={handleSubmit}>

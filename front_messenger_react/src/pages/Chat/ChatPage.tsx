@@ -9,7 +9,7 @@ import ServiceResponse from "../../ServiceResponse";
 import { IMessageItem } from "../../store/messages/types";
 
 const ChatPage = () => {
-  const { GetConversations, ReceiveMessage } = useActions();
+  const { GetConversations, ReceiveMessage, ReceiveMessageConversation } = useActions();
   const { guid } = useParams();
 
   const { events } = chatServiceConnector();
@@ -25,6 +25,7 @@ const ChatPage = () => {
   const onReceiveMessage = async (model: ServiceResponse<IMessageItem>) => {
     try {
       await ReceiveMessage(model);
+      await ReceiveMessageConversation(model);
     } catch (error: any) {
       console.error("Щось пішло не так, ", error);
     }

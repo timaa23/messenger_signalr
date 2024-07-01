@@ -22,6 +22,7 @@ export const SetMessagePage =
         type: MessageActionTypes.SET_MESSAGE_PAGE,
         payload: {
           messages: data.payload,
+          conversationGuid: conversationGuid,
           // loading: false,
         },
       });
@@ -88,7 +89,6 @@ export const SendMessage =
 
       var message: IMessageItem = {
         ...model,
-        senderId: -1,
         guid: tempGuid,
         dateTime: new Date(),
         isPending: true,
@@ -101,14 +101,12 @@ export const SendMessage =
         },
       });
 
-      const resp = await sendMessage(model);
-      const { payload } = resp;
+      await sendMessage(model);
 
       dispatch({
         type: MessageActionTypes.SEND_MESSAGE_SUCCESS,
         payload: {
-          message: payload,
-          oldGuid: tempGuid,
+          tempMessageGuid: tempGuid,
         },
       });
 

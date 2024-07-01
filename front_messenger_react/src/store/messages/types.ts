@@ -6,9 +6,11 @@ export enum MessageTypes {
 }
 
 export interface IMessageItem {
-  senderId: number;
-  message: string;
+  // id: number;
   guid: string;
+  message: string;
+  senderId?: number;
+  // conversationId: string;
   conversationGuid: string;
   messageType: MessageTypes;
   dateTime: Date;
@@ -17,12 +19,14 @@ export interface IMessageItem {
 
 export interface IMessageSendItem {
   message: string;
+  // conversationId: number;
   conversationGuid: string;
   messageType: MessageTypes;
 }
 
 export interface IMessageState {
   // loading: boolean;
+  conversationGuid: string;
   messages: Array<IMessageItem>;
 }
 
@@ -57,7 +61,7 @@ export interface SendMessagePendingAction {
 
 export interface SendMessageSuccessAction {
   type: MessageActionTypes.SEND_MESSAGE_SUCCESS;
-  payload: { message: IMessageItem; oldGuid: string };
+  payload: { tempMessageGuid: string };
 }
 
 export type MessageActions =

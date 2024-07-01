@@ -15,11 +15,9 @@ namespace back_messenger_signalr.Hubs
     {
         private readonly IMessageService _messageService;
         private readonly IConversationRepository _conversationRepository;
-        private readonly IDictionary<string, UserRoomConnection> _connections;
         private readonly OnlineDB _onlineDB;
-        public ChatHub(IDictionary<string, UserRoomConnection> connections, OnlineDB onlineDB, IMessageService messageService, IConversationRepository conversationRepository)
+        public ChatHub(OnlineDB onlineDB, IMessageService messageService, IConversationRepository conversationRepository)
         {
-            _connections = connections;
             _onlineDB = onlineDB;
             _messageService = messageService;
             _conversationRepository = conversationRepository;
@@ -32,21 +30,6 @@ namespace back_messenger_signalr.Hubs
             Console.WriteLine($"USER WITH ID: #{userID} HAS BEEN CONNECTED");
 
             return base.OnConnectedAsync();
-        }
-
-        public async Task<bool> TestAsync(string message, Guid guid)
-        {
-            var user = Context.UserIdentifier;
-
-            var participants = await _conversationRepository.GetAll()
-                .Where(c => c.Guid.Equals(guid))
-                .Select(c => c.Participants)
-                .FirstOrDefaultAsync();
-
-            foreach (var participant in participants)
-                await Clients.User(Convert.ToString(participant.UserId)).ReceiveMessage(message, $"#{user} send: {message}", DateTime.Now);
-
-            return true;
         }
 
         public override Task OnDisconnectedAsync(Exception? exception)
@@ -75,21 +58,12 @@ namespace back_messenger_signalr.Hubs
             {
                 string participantIdString = Convert.ToString(participant.UserId);
 
-                // temporary
-                if (userId.Equals(participantIdString)) continue;
-                await Clients.User(participantIdString).ReceiveMessage(message);
+                if (!userId.Equals(participantIdString))
+                    await Clients.User(participantIdString).ReceiveMessage(message);
             }
 
+            await Clients.Caller.ReceiveMessage(message);
             return message;
-        }
-
-        public Task SendConnectedUsers(string room)
-        {
-            var users = _connections.Values
-                .Where(x => x.Room == room)
-                .Select(x => x.User!);
-
-            return Clients.Group(room).ReceiveConnectedUsers(users);
         }
     }
 }

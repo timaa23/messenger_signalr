@@ -6,8 +6,7 @@ namespace back_messenger_signalr.Repositories.Interfaces
     public interface IMessageRepository : IGenericRepository<MessageEntity, int>
     {
         IQueryable<MessageEntity> MessagesEager { get; }
-        IQueryable<MessageViewModel> GetMessagesByConversationGuid(Guid conversationGuid, string userId);
-
-        Task<MessageViewModel> SendMessage(MessageSendViewModel model, string userId);
+        IQueryable<MessageEntity> GetMessagesByConversationGuid(Guid conversationGuid);
+        Task<MessageEntity> SendMessage(MessageSendViewModel model, int userId);
     }
 }

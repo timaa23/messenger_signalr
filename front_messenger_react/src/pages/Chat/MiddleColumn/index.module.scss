@@ -3,7 +3,7 @@
 .middle_column {
   height: 100%;
   min-width: 0;
-  // overflow: hidden;
+  overflow: hidden;
   position: relative;
 
   &_main {
@@ -12,7 +12,6 @@
 
     display: flex;
     flex-direction: column;
-    // align-items: center;
     animation-fill-mode: forwards;
 
     &_header {
@@ -26,10 +25,8 @@
     .messages {
       flex: 1;
       margin-bottom: 0.5rem;
-      // overflow-y: scroll;
-      // overflow-x: hidden;
-
-      margin-bottom: 0.5rem;
+      overflow-y: scroll;
+      overflow-x: hidden;
     }
 
     &_footer {

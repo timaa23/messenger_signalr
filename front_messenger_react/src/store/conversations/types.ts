@@ -7,6 +7,7 @@ export enum ConversationTypes {
 }
 
 export interface IConversationItem {
+  id: number;
   guid: string;
   name: string;
   image: string;
@@ -22,6 +23,7 @@ export interface IConversationState {
 
 export enum ConversationActionTypes {
   GET_USER_CONVERSATIONS = "GET_USER_CONVERSATIONS",
+  RECEIVE_MESSAGE_CONVERSATION = "RECEIVE_MESSAGE_CONVERSATION",
 }
 
 export interface GetUserConversationsAction {
@@ -29,4 +31,11 @@ export interface GetUserConversationsAction {
   payload: IConversationState;
 }
 
-export type ConversationActions = GetUserConversationsAction;
+export interface ReceiveMessageConversationAction {
+  type: ConversationActionTypes.RECEIVE_MESSAGE_CONVERSATION;
+  payload: { message: IMessageItem };
+}
+
+export type ConversationActions =
+  | GetUserConversationsAction
+  | ReceiveMessageConversationAction;
