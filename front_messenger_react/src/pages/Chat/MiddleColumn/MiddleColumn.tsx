@@ -9,16 +9,13 @@ import MessageInput from "../../../components/common/inputs/MessageInput/Message
 import { IMessageSendItem, MessageTypes } from "../../../store/messages/types";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import chatServiceConnector from "../../../helpers/chatServiceConnector";
 
 const MiddleColumn = () => {
-  const { SetMessagePage } = useActions();
+  const { SetMessagePage, SendMessage } = useActions();
   const { guid } = useParams();
 
   const { user } = useTypedSelector((store) => store.auth);
   const { messages } = useTypedSelector((store) => store.message);
-
-  const { events, testMessage } = chatServiceConnector();
 
   const navigator = useNavigate();
 
@@ -34,28 +31,15 @@ const MiddleColumn = () => {
 
   useEffect(() => {
     LoadMessages();
-    events((userName, message, date) => {
-      console.log("OBJECT WS", { userName, message, date });
-    });
   }, [guid]);
 
-  const { SendMessageHTTP } = useActions();
-
   const onSubmitHandler = async (model: IMessageSendItem) => {
-    console.log("MODEL", model);
-
+    setFieldValue("message", "");
     try {
-      const resp = await testMessage(model.message, model.conversationGuid);
-      console.log("RESP", resp);
-    } catch (err) {
-      console.error("ERROR ON SEND", err);
+      await SendMessage(model);
+    } catch (error) {
+      console.error("Щось пішло не так, ", error);
     }
-    // try {
-    //   await SendMessage(model);
-    //   setFieldValue("message", "");
-    // } catch (error) {
-    //   console.error("Щось пішло не так, ", error);
-    // }
   };
 
   //Formik
@@ -88,8 +72,9 @@ const MiddleColumn = () => {
                 <MessageCard
                   key={item.guid}
                   message={item.message}
-                  owner={user?.id == item.senderId}
+                  owner={user?.id == item.senderId || !!item.isPending}
                   dateTime={item.dateTime}
+                  isPending={item.isPending}
                 />
               ))}
             </div>

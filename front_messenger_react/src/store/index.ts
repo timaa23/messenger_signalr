@@ -1,9 +1,9 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { Tuple, configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
 import { MessageReducer } from "./messages/messageReducer";
 import { AuthReducer } from "./auth/authReducer";
 import { ConversationReducer } from "./conversations/conversationReducer";
-// import thunk from "redux-thunk";
+import { thunk } from "redux-thunk";
 //Reducers
 
 export const rootReducer = combineReducers({
@@ -15,4 +15,6 @@ export const rootReducer = combineReducers({
 export const store = configureStore({
   reducer: rootReducer,
   devTools: true,
+  middleware: () => new Tuple(thunk),
+  // middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
 });

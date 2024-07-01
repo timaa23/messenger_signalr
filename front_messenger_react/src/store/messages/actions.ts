@@ -7,6 +7,7 @@ import {
 } from "./types";
 import ServiceResponse from "../../ServiceResponse";
 import http from "../../http_common";
+import chatServiceConnector from "../../helpers/chatServiceConnector";
 
 export const SetMessagePage =
   (conversationGuid: string) => async (dispatch: Dispatch<MessageActions>) => {
@@ -19,7 +20,10 @@ export const SetMessagePage =
 
       dispatch({
         type: MessageActionTypes.SET_MESSAGE_PAGE,
-        payload: { messages: data.payload, loading: false },
+        payload: {
+          messages: data.payload,
+          // loading: false,
+        },
       });
 
       console.log("MESSAGES ACTION", data);
@@ -55,27 +59,60 @@ export const SendMessageHTTP =
     }
   };
 
-// IN PROGRESS
-export const SendMessage =
-  (model: IMessageSendItem) => async (dispatch: Dispatch<MessageActions>) => {
+export const ReceiveMessage =
+  (model: ServiceResponse<IMessageItem>) =>
+  async (dispatch: Dispatch<MessageActions>) => {
     try {
-      const resp = await http.post<ServiceResponse<IMessageItem>>(
-        `/api/Message/send`,
-        model
-      );
-
-      const { data } = resp;
+      const { payload } = model;
 
       dispatch({
-        type: MessageActionTypes.SEND_MESSAGE_HTTP,
+        type: MessageActionTypes.RECEIVE_MESSAGE,
         payload: {
-          message: data.payload,
+          message: payload,
         },
       });
 
-      console.log("SEND MESSAGES ACTION", data);
+      return Promise.resolve(payload);
+    } catch (error: any) {
+      return Promise.reject(error.response);
+    }
+  };
 
-      return Promise.resolve(data);
+export const SendMessage =
+  (model: IMessageSendItem) => async (dispatch: Dispatch<MessageActions>) => {
+    try {
+      const { sendMessage } = chatServiceConnector();
+
+      // generate temp guid
+      const tempGuid = Math.random().toString(36).slice(2, 9);
+
+      var message: IMessageItem = {
+        ...model,
+        senderId: -1,
+        guid: tempGuid,
+        dateTime: new Date(),
+        isPending: true,
+      };
+
+      dispatch({
+        type: MessageActionTypes.SEND_MESSAGE_PENDING,
+        payload: {
+          message: message,
+        },
+      });
+
+      const resp = await sendMessage(model);
+      const { payload } = resp;
+
+      dispatch({
+        type: MessageActionTypes.SEND_MESSAGE_SUCCESS,
+        payload: {
+          message: payload,
+          oldGuid: tempGuid,
+        },
+      });
+
+      return Promise.resolve();
     } catch (error: any) {
       return Promise.reject(error.response);
     }

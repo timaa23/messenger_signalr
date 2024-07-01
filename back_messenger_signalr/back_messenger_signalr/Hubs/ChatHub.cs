@@ -75,6 +75,8 @@ namespace back_messenger_signalr.Hubs
             {
                 string participantIdString = Convert.ToString(participant.UserId);
 
+                // temporary
+                if (userId.Equals(participantIdString)) continue;
                 await Clients.User(participantIdString).ReceiveMessage(message);
             }
 

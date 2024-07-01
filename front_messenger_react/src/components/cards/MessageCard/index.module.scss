@@ -62,7 +62,7 @@ $border-radius-messages-small: 0.375rem;
     border-radius: 0.25rem;
     position: relative;
 
-    .time_meta {
+    &_meta {
       display: flex;
       align-items: center;
       border-radius: 0.625rem;
@@ -83,8 +83,25 @@ $border-radius-messages-small: 0.375rem;
       background: none;
 
       white-space: nowrap;
-      font-size: 0.75rem;
       line-height: 1.35;
+
+      .time_meta {
+        margin-right: 0.375rem;
+        font-size: 0.75rem;
+      }
+
+      .message_status {
+        width: 1.1875rem;
+        height: 1.1875rem;
+        max-height: 1.25rem;
+        line-height: 1;
+
+        color: rgb(255, 255, 255);
+
+        font-size: 1.1875rem;
+        margin-left: -0.1875rem;
+        border-radius: 0.625rem;
+      }
     }
   }
 }

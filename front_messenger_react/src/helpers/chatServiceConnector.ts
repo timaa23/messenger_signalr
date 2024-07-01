@@ -1,5 +1,6 @@
 import * as signalR from "@microsoft/signalr";
-import { IMessageSendItem } from "../store/messages/types";
+import { IMessageItem, IMessageSendItem } from "../store/messages/types";
+import ServiceResponse from "../ServiceResponse";
 
 const SIGNALR_URL: string = "http://localhost:5010/chat";
 
@@ -8,7 +9,7 @@ class ChatServiceConnector {
   private connection: signalR.HubConnection;
 
   public events: (
-    onMessageReceived: (username: string, message: string, date: Date) => void
+    onMessageReceived: (model: ServiceResponse<IMessageItem>) => void
   ) => void;
 
   constructor() {
@@ -21,8 +22,8 @@ class ChatServiceConnector {
     this.start();
 
     this.events = (onMessageReceived) => {
-      this.connection.on("ReceiveMessage", (username, message, date) => {
-        onMessageReceived(username, message, date);
+      this.connection.on("ReceiveMessage", (model: ServiceResponse<IMessageItem>) => {
+        onMessageReceived(model);
       });
     };
   }
@@ -36,12 +37,10 @@ class ChatServiceConnector {
     }
   }
 
-  public sendMessage = (model: IMessageSendItem) => {
+  public sendMessage = (
+    model: IMessageSendItem
+  ): Promise<ServiceResponse<IMessageItem>> => {
     return this.connection.invoke("SendMessage", model);
-  };
-
-  public testMessage = (message: string, guid: string) => {
-    return this.connection.invoke("TestAsync", message, guid);
   };
 
   public static getInstance(): ChatServiceConnector {

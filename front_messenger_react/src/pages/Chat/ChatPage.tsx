@@ -5,12 +5,14 @@ import MiddleColumn from "./MiddleColumn/MiddleColumn";
 import styles from "./index.module.scss";
 import { useParams } from "react-router-dom";
 import chatServiceConnector from "../../helpers/chatServiceConnector";
+import ServiceResponse from "../../ServiceResponse";
+import { IMessageItem } from "../../store/messages/types";
 
 const ChatPage = () => {
-  const { GetConversations } = useActions();
+  const { GetConversations, ReceiveMessage } = useActions();
   const { guid } = useParams();
 
-  const { testMessage, events } = chatServiceConnector();
+  const { events } = chatServiceConnector();
 
   const LoadConversations = async () => {
     try {
@@ -20,11 +22,20 @@ const ChatPage = () => {
     }
   };
 
+  const onReceiveMessage = async (model: ServiceResponse<IMessageItem>) => {
+    try {
+      await ReceiveMessage(model);
+    } catch (error: any) {
+      console.error("Щось пішло не так, ", error);
+    }
+  };
+
   useEffect(() => {
     LoadConversations();
 
-    events((userName, message, date) => {
-      console.log("OBJECT WS IN CHAT PAGE", { userName, message, date });
+    events((model) => {
+      console.log("OBJECT WS IN CHAT PAGE", model);
+      onReceiveMessage(model);
     });
   }, []);
 
