@@ -9,9 +9,16 @@ import ServiceResponse from "../../ServiceResponse";
 import http from "../../http_common";
 import chatServiceConnector from "../../helpers/chatServiceConnector";
 
-export const SetMessagePage =
+export const FetchMessages =
   (conversationGuid: string) => async (dispatch: Dispatch<MessageActions>) => {
     try {
+      dispatch({
+        type: MessageActionTypes.FETCH_MESSAGES_PENDING,
+        payload: {
+          conversationGuid: conversationGuid,
+        },
+      });
+
       const resp = await http.get<ServiceResponse<Array<IMessageItem>>>(
         `/api/Message/get/conversationGuid/${conversationGuid}`
       );
@@ -19,11 +26,9 @@ export const SetMessagePage =
       const { data } = resp;
 
       dispatch({
-        type: MessageActionTypes.SET_MESSAGE_PAGE,
+        type: MessageActionTypes.FETCH_MESSAGES_SUCCESS,
         payload: {
           messages: data.payload,
-          conversationGuid: conversationGuid,
-          // loading: false,
         },
       });
 
@@ -31,31 +36,9 @@ export const SetMessagePage =
 
       return Promise.resolve(data);
     } catch (error: any) {
-      return Promise.reject(error.response);
-    }
-  };
-
-export const SendMessageHTTP =
-  (model: IMessageSendItem) => async (dispatch: Dispatch<MessageActions>) => {
-    try {
-      const resp = await http.post<ServiceResponse<IMessageItem>>(
-        `/api/Message/send`,
-        model
-      );
-
-      const { data } = resp;
-
       dispatch({
-        type: MessageActionTypes.SEND_MESSAGE_HTTP,
-        payload: {
-          message: data.payload,
-        },
+        type: MessageActionTypes.FETCH_MESSAGES_FAILURE,
       });
-
-      console.log("SEND MESSAGES ACTION", data);
-
-      return Promise.resolve(data);
-    } catch (error: any) {
       return Promise.reject(error.response);
     }
   };
@@ -84,15 +67,7 @@ export const SendMessage =
     try {
       const { sendMessage } = chatServiceConnector();
 
-      // generate temp guid
-      const tempGuid = Math.random().toString(36).slice(2, 9);
-
-      var message: IMessageItem = {
-        ...model,
-        guid: tempGuid,
-        dateTime: new Date(),
-        isPending: true,
-      };
+      const message = GetTempMessage(model);
 
       dispatch({
         type: MessageActionTypes.SEND_MESSAGE_PENDING,
@@ -101,12 +76,13 @@ export const SendMessage =
         },
       });
 
-      await sendMessage(model);
+      var resp = await sendMessage(model);
 
       dispatch({
         type: MessageActionTypes.SEND_MESSAGE_SUCCESS,
         payload: {
-          tempMessageGuid: tempGuid,
+          message: resp.payload,
+          tempMessageGuid: message.guid,
         },
       });
 
@@ -115,3 +91,18 @@ export const SendMessage =
       return Promise.reject(error.response);
     }
   };
+
+const GetTempMessage = (model: IMessageSendItem): IMessageItem => {
+  // generate temp guid
+  const tempGuid = Math.random().toString(36).slice(2, 9);
+  const tempDate = new Date();
+
+  var message: IMessageItem = {
+    ...model,
+    guid: tempGuid,
+    dateTime: tempDate,
+    isPending: true,
+  };
+
+  return message;
+};

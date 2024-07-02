@@ -1,12 +1,10 @@
 ﻿using back_messenger_signalr.Helpers;
-using back_messenger_signalr.Models;
 using back_messenger_signalr.Models.Message;
 using back_messenger_signalr.Repositories.Interfaces;
 using back_messenger_signalr.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace back_messenger_signalr.Hubs
 {

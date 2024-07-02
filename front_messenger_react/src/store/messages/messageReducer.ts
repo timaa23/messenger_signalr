@@ -1,7 +1,7 @@
 import { IMessageItem, IMessageState, MessageActionTypes, MessageActions } from "./types";
 
 const initialState: IMessageState = {
-  // loading: false,
+  loading: false,
   conversationGuid: "",
   messages: [],
 };
@@ -11,28 +11,32 @@ export const MessageReducer = (
   action: MessageActions
 ): IMessageState => {
   switch (action.type) {
-    case MessageActionTypes.SET_MESSAGE_PAGE: {
+    // Fetch message
+    case MessageActionTypes.FETCH_MESSAGES_PENDING: {
       return {
         ...state,
-        ...action.payload,
+        loading: true,
+        messages: [],
+        conversationGuid: action.payload.conversationGuid,
       };
     }
-    case MessageActionTypes.SEND_MESSAGE_HTTP: {
+    case MessageActionTypes.FETCH_MESSAGES_SUCCESS: {
       return {
         ...state,
-        messages: [action.payload.message, ...state.messages],
+        loading: false,
+        messages: action.payload.messages,
       };
     }
-    case MessageActionTypes.RECEIVE_MESSAGE: {
-      const { messages, conversationGuid } = state;
-      const { message } = action.payload;
-
-      if (message.conversationGuid !== conversationGuid) return { ...state };
-
-      setReceivedMessage(messages, message);
-
-      return { ...state };
+    case MessageActionTypes.FETCH_MESSAGES_FAILURE: {
+      return {
+        ...state,
+        loading: false,
+        messages: [],
+        conversationGuid: "",
+      };
     }
+
+    // Send message
     case MessageActionTypes.SEND_MESSAGE_PENDING: {
       return {
         ...state,
@@ -41,11 +45,23 @@ export const MessageReducer = (
     }
     case MessageActionTypes.SEND_MESSAGE_SUCCESS: {
       const { messages } = state;
-      const { tempMessageGuid } = action.payload;
+      const { message, tempMessageGuid } = action.payload;
 
-      removePendingMessage(messages, tempMessageGuid);
+      const messagesTemp = replacePendingMessage(messages, message, tempMessageGuid);
 
-      return { ...state };
+      return { ...state, messages: messagesTemp };
+    }
+
+    // Receive messsage
+    case MessageActionTypes.RECEIVE_MESSAGE: {
+      const { messages, conversationGuid } = state;
+      const { message } = action.payload;
+
+      if (message.conversationGuid !== conversationGuid) return { ...state };
+
+      const messagesTemp = setReceivedMessage(messages, message);
+
+      return { ...state, messages: messagesTemp };
     }
     default:
       return state;
@@ -55,16 +71,26 @@ export const MessageReducer = (
 const setReceivedMessage = (messages: Array<IMessageItem>, message: IMessageItem) => {
   var lastSuccessId = messages.findIndex((m) => !m.isPending);
   if (lastSuccessId == -1) lastSuccessId = messages.length;
-  console.log("LAST SUCCESS", { m: messages[lastSuccessId], id: lastSuccessId });
 
+  var list = messages.slice(0);
   // set message after last success
-  messages.splice(lastSuccessId, 0, message);
+  list.splice(lastSuccessId, 0, message);
+
+  return list;
 };
 
-const removePendingMessage = (messages: Array<IMessageItem>, messageGuid: string) => {
-  var oldMessageId = messages.findIndex((m) => m.guid === messageGuid && m.isPending);
-  if (oldMessageId == -1) return;
+const replacePendingMessage = (
+  messages: Array<IMessageItem>,
+  message: IMessageItem,
+  messageGuid: string
+) => {
+  // setting last message in conversation
+  var list = messages.map((m) => {
+    if (m.guid === messageGuid && m.isPending) {
+      return message;
+    }
+    return m;
+  });
 
-  // remove old pending
-  messages.splice(oldMessageId, 1);
+  return list;
 };

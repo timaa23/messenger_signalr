@@ -7,10 +7,13 @@ import { useParams } from "react-router-dom";
 import chatServiceConnector from "../../helpers/chatServiceConnector";
 import ServiceResponse from "../../ServiceResponse";
 import { IMessageItem } from "../../store/messages/types";
+import { useTypedSelector } from "../../hooks/useTypedSelector";
 
 const ChatPage = () => {
   const { GetConversations, ReceiveMessage, ReceiveMessageConversation } = useActions();
   const { guid } = useParams();
+
+  const { user } = useTypedSelector((store) => store.auth);
 
   const { events } = chatServiceConnector();
 
@@ -24,7 +27,12 @@ const ChatPage = () => {
 
   const onReceiveMessage = async (model: ServiceResponse<IMessageItem>) => {
     try {
-      await ReceiveMessage(model);
+      if (user?.id != model.payload.senderId) {
+        // Set message in middle column
+        await ReceiveMessage(model);
+      }
+
+      // Set message in left column
       await ReceiveMessageConversation(model);
     } catch (error: any) {
       console.error("Щось пішло не так, ", error);

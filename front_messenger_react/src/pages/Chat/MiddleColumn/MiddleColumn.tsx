@@ -8,11 +8,14 @@ import classNames from "classnames";
 import MessageInput from "../../../components/common/inputs/MessageInput/MessageInput";
 import { IMessageSendItem, MessageTypes } from "../../../store/messages/types";
 import { useFormik } from "formik";
+import { invariant } from "../../../helpers/invariant";
 import * as Yup from "yup";
 
 const MiddleColumn = () => {
-  const { SetMessagePage, SendMessage } = useActions();
+  const { FetchMessages, SendMessage } = useActions();
   const { guid } = useParams();
+
+  invariant(guid);
 
   const { user } = useTypedSelector((store) => store.auth);
   const { messages } = useTypedSelector((store) => store.message);
@@ -23,12 +26,15 @@ const MiddleColumn = () => {
 
   const LoadMessages = async () => {
     try {
-      await SetMessagePage(guid ?? "");
-      console.log("SET MESSAGES");
+      await FetchMessages(guid);
     } catch (error: any) {
       console.error("Щось пішло не так, ", error);
       navigator("/");
     }
+  };
+
+  const ScrollToBottom = () => {
+    scrollToRef.current?.scrollIntoView();
   };
 
   useEffect(() => {
@@ -36,11 +42,12 @@ const MiddleColumn = () => {
   }, [guid]);
 
   useEffect(() => {
-    scrollToRef.current?.scrollIntoView();
+    ScrollToBottom();
   }, [messages]);
 
   const onSubmitHandler = async (model: IMessageSendItem) => {
     setFieldValue("message", "");
+
     try {
       await SendMessage(model);
     } catch (error) {
@@ -51,7 +58,7 @@ const MiddleColumn = () => {
   //Formik
   const modelInitValues: IMessageSendItem = {
     message: "",
-    conversationGuid: guid ?? "",
+    conversationGuid: guid,
     messageType: MessageTypes.Text,
   };
 
@@ -63,6 +70,7 @@ const MiddleColumn = () => {
     initialValues: modelInitValues,
     validationSchema: sendSchema,
     onSubmit: onSubmitHandler,
+    enableReinitialize: true,
   });
 
   const { values, handleSubmit, handleChange, setFieldValue } = formik;

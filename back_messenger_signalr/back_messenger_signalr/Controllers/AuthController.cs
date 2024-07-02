@@ -31,19 +31,5 @@ namespace back_messenger_signalr.Controllers
 
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
-
-        [HttpGet]
-        [Route("get_identity")]
-        public async Task<IActionResult> GetIdentityAsync()
-        {
-            var id = User.FindFirst("id").Value;
-
-            ServiceResponse<string> result = new ()
-            {
-                Message = "Identity",
-                Payload = id
-            };
-            return result.IsSuccess ? Ok(result) : BadRequest(result);
-        }
     }
 }

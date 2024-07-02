@@ -25,35 +25,40 @@ export interface IMessageSendItem {
 }
 
 export interface IMessageState {
-  // loading: boolean;
+  loading: boolean;
   conversationGuid: string;
   messages: Array<IMessageItem>;
 }
 
 export enum MessageActionTypes {
-  SET_MESSAGE_PAGE = "SET_MESSAGE_PAGE",
-  SEND_MESSAGE_HTTP = "SEND_MESSAGE_HTTP",
+  FETCH_MESSAGES_PENDING = "FETCH_MESSAGES_PENDING",
+  FETCH_MESSAGES_SUCCESS = "FETCH_MESSAGES_SUCCESS",
+  FETCH_MESSAGES_FAILURE = "FETCH_MESSAGES_FAILURE",
 
   RECEIVE_MESSAGE = "RECEIVE_MESSAGE",
+
   SEND_MESSAGE_PENDING = "SEND_MESSAGE_PENDING",
   SEND_MESSAGE_SUCCESS = "SEND_MESSAGE_SUCCESS",
+
+  // SEND_MESSAGE_HTTP = "SEND_MESSAGE_HTTP",
 }
 
-export interface SetMessagePageAction {
-  type: MessageActionTypes.SET_MESSAGE_PAGE;
-  payload: IMessageState;
+// Fetch message
+export interface FetchMessagesPendingAction {
+  type: MessageActionTypes.FETCH_MESSAGES_PENDING;
+  payload: { conversationGuid: string };
 }
 
-export interface SendMessageHTTPAction {
-  type: MessageActionTypes.SEND_MESSAGE_HTTP;
-  payload: { message: IMessageItem };
+export interface FetchMessagesSuccessAction {
+  type: MessageActionTypes.FETCH_MESSAGES_SUCCESS;
+  payload: { messages: Array<IMessageItem> };
 }
 
-export interface ReceiveMessageAction {
-  type: MessageActionTypes.RECEIVE_MESSAGE;
-  payload: { message: IMessageItem };
+export interface FetchMessagesFailureAction {
+  type: MessageActionTypes.FETCH_MESSAGES_FAILURE;
 }
 
+// Send message
 export interface SendMessagePendingAction {
   type: MessageActionTypes.SEND_MESSAGE_PENDING;
   payload: { message: IMessageItem };
@@ -61,12 +66,27 @@ export interface SendMessagePendingAction {
 
 export interface SendMessageSuccessAction {
   type: MessageActionTypes.SEND_MESSAGE_SUCCESS;
-  payload: { tempMessageGuid: string };
+  payload: { message: IMessageItem; tempMessageGuid: string };
 }
 
+// Receive messsage
+export interface ReceiveMessageAction {
+  type: MessageActionTypes.RECEIVE_MESSAGE;
+  payload: { message: IMessageItem };
+}
+
+// Action types
 export type MessageActions =
-  | SetMessagePageAction
-  | SendMessageHTTPAction
-  | ReceiveMessageAction
+  | FetchMessagesPendingAction
+  | FetchMessagesSuccessAction
+  | FetchMessagesFailureAction
   | SendMessagePendingAction
-  | SendMessageSuccessAction;
+  | SendMessageSuccessAction
+  | ReceiveMessageAction;
+// | SendMessageHTTPAction;
+
+// JUST FOR TESTING
+// export interface SendMessageHTTPAction {
+//   type: MessageActionTypes.SEND_MESSAGE_HTTP;
+//   payload: { message: IMessageItem };
+// }
