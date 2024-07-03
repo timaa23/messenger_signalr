@@ -44,8 +44,10 @@ export const MessageReducer = (
       };
     }
     case MessageActionTypes.SEND_MESSAGE_SUCCESS: {
-      const { messages } = state;
+      const { messages, conversationGuid } = state;
       const { message, tempMessageGuid } = action.payload;
+
+      if (message.conversationGuid !== conversationGuid) return { ...state };
 
       const messagesTemp = replacePendingMessage(messages, message, tempMessageGuid);
 
@@ -84,13 +86,15 @@ const replacePendingMessage = (
   message: IMessageItem,
   messageGuid: string
 ) => {
-  // setting last message in conversation
-  var list = messages.map((m) => {
-    if (m.guid === messageGuid && m.isPending) {
-      return message;
-    }
-    return m;
-  });
+  const pendingMessages = [];
+  const nonPendingMessages = [];
 
-  return list;
+  for (const item of messages) {
+    if (item.guid === messageGuid) continue;
+
+    if (item.isPending) pendingMessages.push(item);
+    else nonPendingMessages.push(item);
+  }
+
+  return [...pendingMessages, message, ...nonPendingMessages];
 };
