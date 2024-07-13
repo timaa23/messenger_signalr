@@ -17,12 +17,12 @@ namespace back_messenger_signalr.Controllers
 
         [Authorize]
         [HttpGet]
-        [Route("get/conversationGuid/{guid}")]
-        public async Task<IActionResult> GetByConversationGuidAsync(Guid guid)
+        [Route("get/conversationId/{conversationId}")]
+        public async Task<IActionResult> GetByConversationIdAsync(int conversationId)
         {
             var userId = User.FindFirst("id").Value;
 
-            var result = await _messageService.GetMessagesByConversationGuid(guid, userId);
+            var result = await _messageService.GetMessagesByConversationId(conversationId, userId);
 
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }

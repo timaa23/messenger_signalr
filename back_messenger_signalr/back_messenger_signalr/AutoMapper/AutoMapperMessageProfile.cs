@@ -11,8 +11,8 @@ namespace back_messenger_signalr.AutoMapper
             CreateMap<MessageEntity, MessageViewModel>()
                 .ForMember(dest => dest.Message, opt => opt.MapFrom(src => src.Body))
                 .ForMember(dest => dest.DateTime, opt => opt.MapFrom(src => src.DateCreated))
-                //.ForMember(dest => dest.ConversationId, opt => opt.MapFrom(src => src.Conversation.Id))
-                .ForMember(dest => dest.ConversationGuid, opt => opt.MapFrom(src => src.Conversation.Guid));
+                .ForMember(dest => dest.ConversationId, opt => opt.MapFrom(src => src.Conversation.Id));
+                //.ForMember(dest => dest.ConversationGuid, opt => opt.MapFrom(src => src.Conversation.Guid));
         }
     }
 }

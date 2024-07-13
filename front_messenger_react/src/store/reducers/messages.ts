@@ -1,8 +1,13 @@
-import { IMessageItem, IMessageState, MessageActionTypes, MessageActions } from "./types";
+import {
+  IMessageItem,
+  IMessageState,
+  MessageActionTypes,
+  MessageActions,
+} from "../types/messages";
 
 const initialState: IMessageState = {
   loading: false,
-  conversationGuid: "",
+  conversationId: 0,
   messages: [],
 };
 
@@ -17,7 +22,7 @@ export const MessageReducer = (
         ...state,
         loading: true,
         messages: [],
-        conversationGuid: action.payload.conversationGuid,
+        conversationId: action.payload.conversationId,
       };
     }
     case MessageActionTypes.FETCH_MESSAGES_SUCCESS: {
@@ -32,7 +37,7 @@ export const MessageReducer = (
         ...state,
         loading: false,
         messages: [],
-        conversationGuid: "",
+        conversationId: 0,
       };
     }
 
@@ -44,10 +49,10 @@ export const MessageReducer = (
       };
     }
     case MessageActionTypes.SEND_MESSAGE_SUCCESS: {
-      const { messages, conversationGuid } = state;
+      const { messages, conversationId } = state;
       const { message, tempMessageGuid } = action.payload;
 
-      if (message.conversationGuid !== conversationGuid) return { ...state };
+      if (message.conversationId !== conversationId) return { ...state };
 
       const messagesTemp = replacePendingMessage(messages, message, tempMessageGuid);
 
@@ -56,10 +61,10 @@ export const MessageReducer = (
 
     // Receive messsage
     case MessageActionTypes.RECEIVE_MESSAGE: {
-      const { messages, conversationGuid } = state;
+      const { messages, conversationId } = state;
       const { message } = action.payload;
 
-      if (message.conversationGuid !== conversationGuid) return { ...state };
+      if (message.conversationId !== conversationId) return { ...state };
 
       const messagesTemp = setReceivedMessage(messages, message);
 

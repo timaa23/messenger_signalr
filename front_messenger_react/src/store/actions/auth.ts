@@ -5,7 +5,7 @@ import {
   ILoginCredentials,
   IRegisterCredentials,
   IUser,
-} from "./types";
+} from "../types/auth";
 import http from "../../http_common";
 import ServiceResponse from "../../ServiceResponse";
 import { jwtDecode } from "jwt-decode";

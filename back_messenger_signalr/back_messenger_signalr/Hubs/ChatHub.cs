@@ -44,7 +44,7 @@ namespace back_messenger_signalr.Hubs
             var userId = Context.UserIdentifier;
 
             var participants = await _conversationRepository.GetAll()
-                .Where(c => c.Guid.Equals(model.ConversationGuid))
+                .Where(c => c.Id.Equals(model.ConversationId))
                 .Select(c => c.Participants)
                 .FirstOrDefaultAsync();
 

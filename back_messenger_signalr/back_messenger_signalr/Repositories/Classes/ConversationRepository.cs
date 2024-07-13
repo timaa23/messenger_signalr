@@ -29,10 +29,10 @@ namespace back_messenger_signalr.Repositories.Classes
             return result;
         }
 
-        public IQueryable<ConversationEntity> GetConversationByGuidAsync(Guid conversationGuid)
-        {
-            return GetAll().Where(c => c.Guid.Equals(conversationGuid)).AsNoTracking();
-        }
+        //public IQueryable<ConversationEntity> GetConversationByGuidAsync(Guid conversationGuid)
+        //{
+        //    return GetAll().Where(c => c.Guid.Equals(conversationGuid)).AsNoTracking();
+        //}
 
         public async Task<ConversationEntity> CreateConversationAsync(ConversationCreateViewModel model)
         {

@@ -20,14 +20,14 @@ namespace back_messenger_signalr.Repositories.Classes
             .ThenInclude(c => c.Participants)
             .AsNoTracking();
 
-        public IQueryable<MessageEntity> GetMessagesByConversationGuid(Guid conversationGuid)
-        {
-            var messages = GetAll()
-                .Where(m => m.Conversation.Guid.Equals(conversationGuid))
-                .AsNoTracking();
+        //public IQueryable<MessageEntity> GetMessagesByConversationGuid(Guid conversationGuid)
+        //{
+        //    var messages = GetAll()
+        //        .Where(m => m.Conversation.Guid.Equals(conversationGuid))
+        //        .AsNoTracking();
 
-            return messages;
-        }
+        //    return messages;
+        //}
 
         public async Task<MessageEntity> SendMessage(MessageSendViewModel model, int userId)
         {

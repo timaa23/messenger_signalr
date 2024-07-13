@@ -6,7 +6,7 @@ import "./icons.scss";
 import "./_fonts.scss";
 import { Provider } from "react-redux";
 import { store } from "./store/index.ts";
-import { setAuthUserByToken } from "./store/auth/actions.ts";
+import { setAuthUserByToken } from "./store/actions/auth.ts";
 
 if (localStorage.getItem("token")) {
   const { token } = localStorage;

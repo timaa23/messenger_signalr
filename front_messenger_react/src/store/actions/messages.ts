@@ -4,23 +4,23 @@ import {
   IMessageSendItem,
   MessageActionTypes,
   MessageActions,
-} from "./types";
+} from "../types/messages";
 import ServiceResponse from "../../ServiceResponse";
 import http from "../../http_common";
 import chatServiceConnector from "../../helpers/chatServiceConnector";
 
 export const FetchMessages =
-  (conversationGuid: string) => async (dispatch: Dispatch<MessageActions>) => {
+  (conversationId: number) => async (dispatch: Dispatch<MessageActions>) => {
     try {
       dispatch({
         type: MessageActionTypes.FETCH_MESSAGES_PENDING,
         payload: {
-          conversationGuid: conversationGuid,
+          conversationId: conversationId,
         },
       });
 
       const resp = await http.get<ServiceResponse<Array<IMessageItem>>>(
-        `/api/Message/get/conversationGuid/${conversationGuid}`
+        `/api/Message/get/conversationId/${conversationId}`
       );
 
       const { data } = resp;

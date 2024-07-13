@@ -7,7 +7,7 @@ namespace back_messenger_signalr.Models.Conversation
     public class ConversationViewModel
     {
         public int Id { get; set; }
-        public Guid Guid { get; set; }
+        //public Guid Guid { get; set; }
         public string Name { get; set; }
         public string Image { get; set; }
         public MessageViewModel LastMessage { get; set; }

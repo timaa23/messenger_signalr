@@ -3,15 +3,15 @@ import { useActions } from "../../hooks/useActions";
 import LeftColumn from "./LeftColumn/LeftColumn";
 import MiddleColumn from "./MiddleColumn/MiddleColumn";
 import styles from "./index.module.scss";
-import { useParams } from "react-router-dom";
 import chatServiceConnector from "../../helpers/chatServiceConnector";
 import ServiceResponse from "../../ServiceResponse";
-import { IMessageItem } from "../../store/messages/types";
+import { IMessageItem } from "../../store/types/messages";
 import { useTypedSelector } from "../../hooks/useTypedSelector";
+import { useTypedParams } from "../../hooks/useTypedParams";
 
 const ChatPage = () => {
   const { GetConversations, ReceiveMessage, ReceiveMessageConversation } = useActions();
-  const { guid } = useParams();
+  const conversationIdParam = useTypedParams("conversationId", "number");
 
   const { user } = useTypedSelector((store) => store.auth);
 
@@ -52,7 +52,7 @@ const ChatPage = () => {
     <>
       <div className={styles.main}>
         <LeftColumn />
-        {guid && <MiddleColumn />}
+        {conversationIdParam && <MiddleColumn />}
       </div>
     </>
   );

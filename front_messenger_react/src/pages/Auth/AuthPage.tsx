@@ -1,5 +1,5 @@
 import { useActions } from "../../hooks/useActions";
-import { ILoginCredentials } from "../../store/auth/types";
+import { ILoginCredentials } from "../../store/types/auth";
 import styles from "./index.module.scss";
 import { useFormik } from "formik";
 import * as Yup from "yup";

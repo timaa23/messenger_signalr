@@ -29,12 +29,12 @@ namespace back_messenger_signalr.Controllers
 
         [Authorize]
         [HttpGet]
-        [Route("get/guid/{guid}")]
-        public async Task<IActionResult> GetByGuidAsync(Guid guid)
+        [Route("get/id/{id}")]
+        public async Task<IActionResult> GetByGuidAsync(int id)
         {
             var userId = User.FindFirst("id").Value;
 
-            var result = await _conversationService.GetConversationByGuidAsync(guid, userId);
+            var result = await _conversationService.GetConversationByIdAsync(id, userId);
 
             if (result.Payload == null) return NotFound(result);
 

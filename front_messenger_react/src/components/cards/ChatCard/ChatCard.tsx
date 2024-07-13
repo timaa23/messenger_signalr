@@ -2,24 +2,27 @@ import React from "react";
 import styles from "./index.module.scss";
 import moment from "moment";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
+import classNames from "classnames";
 
 interface ChatCardProps {
-  guid: string;
+  id: number;
   title: string;
   time?: Date;
   lastMessage?: string;
   badgeNumber?: number;
+  isActive?: boolean;
   image?: string;
   senderId?: number;
-  clickCallback(guid: string): void;
+  clickCallback(id: number): void;
 }
 
 const ChatCard: React.FC<ChatCardProps> = ({
-  guid,
+  id,
   title,
   time,
   lastMessage,
   badgeNumber,
+  isActive,
   image,
   senderId,
   clickCallback,
@@ -27,12 +30,15 @@ const ChatCard: React.FC<ChatCardProps> = ({
   const { user } = useTypedSelector((store) => store.auth);
 
   const onClickHandle = () => {
-    clickCallback(guid);
+    clickCallback(id);
   };
 
   return (
     <>
-      <div onClick={() => onClickHandle()} className={styles.card}>
+      <div
+        onClick={() => onClickHandle()}
+        className={classNames(styles.card, { [styles.active]: isActive })}
+      >
         <div className={styles.card_button}>
           <div className={styles.card_status}>
             <div className={styles.avatar}>

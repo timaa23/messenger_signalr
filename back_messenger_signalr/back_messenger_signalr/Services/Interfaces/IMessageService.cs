@@ -6,6 +6,6 @@ namespace back_messenger_signalr.Services.Interfaces
     public interface IMessageService
     {
         public Task<ServiceResponse<MessageViewModel>> SendMessageAsync(MessageSendViewModel model, string userId);
-        public Task<ServiceResponse<List<MessageViewModel>>> GetMessagesByConversationGuid(Guid conversationGuid, string userId, int last = 0);
+        public Task<ServiceResponse<List<MessageViewModel>>> GetMessagesByConversationId(int conversationId, string userId, int last = 0);
     }
 }

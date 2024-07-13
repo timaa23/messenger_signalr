@@ -16,7 +16,7 @@ namespace back_messenger_signalr.Entities
     public class ConversationEntity : BaseEntity<int>
     {
         public ConversationTypes ConversationType { get; set; }
-        public Guid Guid { get; set; } = Guid.NewGuid();
+        //public Guid Guid { get; set; } = Guid.NewGuid();
 
         [StringLength(255)]
         public string Image { get; set; }

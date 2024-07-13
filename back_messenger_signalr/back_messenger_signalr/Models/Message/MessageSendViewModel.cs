@@ -6,7 +6,7 @@ namespace back_messenger_signalr.Models.Message
     {
         public string Message { get; set; }
         public int ConversationId { get; set; }
-        public Guid ConversationGuid { get; set; }
+        //public Guid ConversationGuid { get; set; }
         public MessageTypes MessageType { get; set; }
     }
 }

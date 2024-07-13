@@ -1,5 +1,5 @@
-import { IMessageItem } from "../messages/types";
-import { IParticipantItem } from "../participant/types";
+import { IMessageItem } from "./messages";
+import { IParticipantItem } from "./participants";
 
 export enum ConversationTypes {
   Single,
@@ -8,7 +8,6 @@ export enum ConversationTypes {
 
 export interface IConversationItem {
   id: number;
-  guid: string;
   name: string;
   image: string;
   lastMessage: IMessageItem | null;
@@ -16,8 +15,15 @@ export interface IConversationItem {
   participants: Array<IParticipantItem>;
 }
 
+export interface IConversationViewItem {
+  id: number;
+  name: string;
+  image: string;
+  lastMessage: IMessageItem | null;
+  conversationType: ConversationTypes;
+}
+
 export interface IConversationState {
-  // currentConversation: string;
   conversations: Array<IConversationItem>;
 }
 

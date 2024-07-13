@@ -70,9 +70,6 @@ namespace back_messenger_signalr
             builder.Entity<MessageEntity>()
                 .HasIndex(m => m.Guid)
                 .IsUnique();
-            builder.Entity<ConversationEntity>()
-                .HasIndex(c => c.Guid)
-                .IsUnique();
 
             // Other properties
             builder.Entity<MessageEntity>()

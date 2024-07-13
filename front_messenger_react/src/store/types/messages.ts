@@ -6,12 +6,11 @@ export enum MessageTypes {
 }
 
 export interface IMessageItem {
-  // id: number;
+  id: number;
   guid: string;
   message: string;
   senderId?: number;
-  // conversationId: string;
-  conversationGuid: string;
+  conversationId: number;
   messageType: MessageTypes;
   dateTime: Date;
   isPending?: boolean;
@@ -19,14 +18,13 @@ export interface IMessageItem {
 
 export interface IMessageSendItem {
   message: string;
-  // conversationId: number;
-  conversationGuid: string;
+  conversationId: number;
   messageType: MessageTypes;
 }
 
 export interface IMessageState {
   loading: boolean;
-  conversationGuid: string;
+  conversationId: number;
   messages: Array<IMessageItem>;
 }
 
@@ -46,7 +44,7 @@ export enum MessageActionTypes {
 // Fetch message
 export interface FetchMessagesPendingAction {
   type: MessageActionTypes.FETCH_MESSAGES_PENDING;
-  payload: { conversationGuid: string };
+  payload: { conversationId: number };
 }
 
 export interface FetchMessagesSuccessAction {

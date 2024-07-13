@@ -8,7 +8,7 @@ namespace back_messenger_signalr.Repositories.Interfaces
     {
         IQueryable<ConversationEntity> ConversationsEager { get; }
         IQueryable<ConversationEntity> GetConversationsByUserIdAsync(int userId);
-        IQueryable<ConversationEntity> GetConversationByGuidAsync(Guid conversationGuid);
+        //IQueryable<ConversationEntity> GetConversationByGuidAsync(Guid conversationGuid);
 
         Task<ConversationEntity> CreateConversationAsync(ConversationCreateViewModel model);
     }

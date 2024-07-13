@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useActions } from "../../../hooks/useActions";
 import styles from "./index.module.scss";
 import { useEffect, useRef } from "react";
@@ -6,16 +6,17 @@ import { useTypedSelector } from "../../../hooks/useTypedSelector";
 import MessageCard from "../../../components/cards/MessageCard/MessageCard";
 import classNames from "classnames";
 import MessageInput from "../../../components/common/inputs/MessageInput/MessageInput";
-import { IMessageSendItem, MessageTypes } from "../../../store/messages/types";
+import { IMessageSendItem, MessageTypes } from "../../../store/types/messages";
 import { useFormik } from "formik";
 import { invariant } from "../../../helpers/invariant";
 import * as Yup from "yup";
+import { useTypedParams } from "../../../hooks/useTypedParams";
 
 const MiddleColumn = () => {
   const { FetchMessages, SendMessage } = useActions();
-  const { guid } = useParams();
+  const conversationIdParam = useTypedParams("conversationId", "number");
 
-  invariant(guid);
+  invariant(conversationIdParam);
 
   const { user } = useTypedSelector((store) => store.auth);
   const { messages } = useTypedSelector((store) => store.message);
@@ -26,7 +27,7 @@ const MiddleColumn = () => {
 
   const LoadMessages = async () => {
     try {
-      await FetchMessages(guid);
+      await FetchMessages(conversationIdParam);
     } catch (error: any) {
       console.error("Щось пішло не так, ", error);
       navigator("/");
@@ -38,8 +39,10 @@ const MiddleColumn = () => {
   };
 
   useEffect(() => {
+    console.log("CONV ID", conversationIdParam);
+
     LoadMessages();
-  }, [guid]);
+  }, [conversationIdParam]);
 
   useEffect(() => {
     ScrollToBottom();
@@ -58,7 +61,7 @@ const MiddleColumn = () => {
   //Formik
   const modelInitValues: IMessageSendItem = {
     message: "",
-    conversationGuid: guid,
+    conversationId: conversationIdParam,
     messageType: MessageTypes.Text,
   };
 

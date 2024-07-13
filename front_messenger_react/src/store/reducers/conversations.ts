@@ -1,11 +1,10 @@
-import moment from "moment";
 import {
   ConversationActionTypes,
   ConversationActions,
   IConversationItem,
   IConversationState,
-} from "./types";
-import { IMessageItem } from "../messages/types";
+} from "../types/conversations";
+import { IMessageItem } from "../types/messages";
 
 const initialState: IConversationState = {
   conversations: [],
@@ -28,9 +27,6 @@ export const ConversationReducer = (
 
       const conversationsTemp = setLastMessage(conversations, message);
 
-      // sorting by last message date with momentJs
-      sortByDate(conversationsTemp);
-
       return { ...state, conversations: conversationsTemp };
     }
     default:
@@ -44,15 +40,12 @@ const setLastMessage = (
 ) => {
   // setting last message in conversation
   var list = conversations.map((conversation) => {
-    if (conversation.guid === message.conversationGuid) {
+    if (conversation.id === message.conversationId) {
       return { ...conversation, lastMessage: { ...message } };
     }
+
     return conversation;
   });
 
   return list;
-};
-
-const sortByDate = (array: Array<IConversationItem>) => {
-  array.sort((l, r) => moment(r.lastMessage?.dateTime).diff(l.lastMessage?.dateTime));
 };

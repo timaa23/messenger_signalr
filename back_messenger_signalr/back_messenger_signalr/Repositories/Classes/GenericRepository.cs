@@ -19,11 +19,11 @@ namespace back_messenger_signalr.Repositories.Classes
                 .AsNoTracking();
         }
 
-        public async Task<TEntity> GetByIdAsync(T id)
+        public IQueryable<TEntity> GetById(T id)
         {
-            return await _dbContext.Set<TEntity>()
-                .AsNoTracking()
-                .FirstOrDefaultAsync(e => e.Id.Equals(id));
+            return _dbContext.Set<TEntity>()
+                .Where(e => e.Id.Equals(id))
+                .AsNoTracking();
         }
 
         public async Task InsertAsync(TEntity entity)

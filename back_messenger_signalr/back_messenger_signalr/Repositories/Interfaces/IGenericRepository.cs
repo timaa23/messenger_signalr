@@ -6,7 +6,7 @@ namespace back_messenger_signalr.Repositories.Interfaces
     {
         IQueryable<TEntity> GetAll();
 
-        Task<TEntity> GetByIdAsync(T id);
+        IQueryable<TEntity> GetById(T id);
 
         Task InsertAsync(TEntity entity);
 

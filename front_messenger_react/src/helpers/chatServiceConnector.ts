@@ -1,5 +1,5 @@
 import * as signalR from "@microsoft/signalr";
-import { IMessageItem, IMessageSendItem } from "../store/messages/types";
+import { IMessageItem, IMessageSendItem } from "../store/types/messages";
 import ServiceResponse from "../ServiceResponse";
 
 const SIGNALR_URL: string = "http://localhost:5010/chat";

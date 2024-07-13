@@ -1,8 +1,12 @@
 import { Dispatch } from "react";
-import { ConversationActionTypes, ConversationActions, IConversationItem } from "./types";
+import {
+  ConversationActionTypes,
+  ConversationActions,
+  IConversationItem,
+} from "../types/conversations";
 import http from "../../http_common";
 import ServiceResponse from "../../ServiceResponse";
-import { IMessageItem } from "../messages/types";
+import { IMessageItem } from "../types/messages";
 
 export const GetConversations = () => async (dispatch: Dispatch<ConversationActions>) => {
   try {

@@ -1,6 +1,6 @@
-import * as MessageActionCreators from "../messages/actions";
-import * as AuthActionCreators from "../auth/actions";
-import * as ConversationActionCreators from "../conversations/actions";
+import * as MessageActionCreators from "../actions/messages";
+import * as AuthActionCreators from "../actions/auth";
+import * as ConversationActionCreators from "../actions/conversations";
 
 const actions = {
   ...MessageActionCreators,

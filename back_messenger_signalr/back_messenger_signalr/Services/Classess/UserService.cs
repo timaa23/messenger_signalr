@@ -1,7 +1,6 @@
 ﻿using back_messenger_signalr.Entities.Identity;
 using back_messenger_signalr.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace back_messenger_signalr.Services.Classess
 {
@@ -29,19 +28,6 @@ namespace back_messenger_signalr.Services.Classess
             bool result = _userManager.Users.Where(u => u.Id.Equals(user.Id))
                 .SelectMany(u => u.Participants)
                 .Any(p => p.ConversationId.Equals(conversationId));
-
-            return result;
-        }
-
-        public async Task<bool> HasConversationAsync(string userId, Guid conversationGuid)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-
-            if (user == null) throw new Exception("User is undefined");
-
-            bool result = _userManager.Users.Where(u => u.Id.Equals(user.Id))
-                .SelectMany(u => u.Participants)
-                .Any(p => p.Conversation.Guid.Equals(conversationGuid));
 
             return result;
         }

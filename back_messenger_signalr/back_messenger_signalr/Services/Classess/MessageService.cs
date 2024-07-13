@@ -28,13 +28,13 @@ namespace back_messenger_signalr.Services.Classess
             {
                 int.TryParse(userId, out var userIdInt);
 
-                var conversation = await ValidateConversation(model.ConversationGuid, userId);
+                var conversation = await ValidateConversation(model.ConversationId, userId);
 
                 model.ConversationId = conversation.Id;
                 var result = await _messageRepository.SendMessage(model, userIdInt);
 
                 var response = _mapper.Map<MessageViewModel>(result,
-                    opts => opts.AfterMap((dest, opt) => opt.ConversationGuid = model.ConversationGuid));
+                    opts => opts.AfterMap((dest, opt) => opt.ConversationId = model.ConversationId));
 
                 return new()
                 {
@@ -52,15 +52,17 @@ namespace back_messenger_signalr.Services.Classess
             }
         }
 
-        public async Task<ServiceResponse<List<MessageViewModel>>> GetMessagesByConversationGuid(Guid conversationGuid, string userId, int last = 0)
+        public async Task<ServiceResponse<List<MessageViewModel>>> GetMessagesByConversationId(int conversationId, string userId, int last = 0)
         {
             try
             {
-                await ValidateConversation(conversationGuid, userId);
+                await ValidateConversation(conversationId, userId);
 
                 int messagesAmount = last > 0 ? last : 25;
 
-                var result = await _messageRepository.GetMessagesByConversationGuid(conversationGuid)
+                // Get messages from conversation
+                var result = await _conversationRepository.GetById(conversationId)
+                    .SelectMany(c => c.Messages)
                     .OrderByDescending(m => m.DateCreated)
                     .Take(messagesAmount)
                     .ProjectTo<MessageViewModel>(_mapper.ConfigurationProvider)
@@ -83,14 +85,14 @@ namespace back_messenger_signalr.Services.Classess
             }
         }
 
-        private async Task<ConversationEntity> ValidateConversation(Guid conversationGuid, string userId)
+        private async Task<ConversationEntity> ValidateConversation(int conversationId, string userId)
         {
-            var conversation = await _conversationRepository.GetConversationByGuidAsync(conversationGuid)
+            var conversation = await _conversationRepository.GetById(conversationId)
                 .SingleOrDefaultAsync();
 
             if (conversation == null) throw new Exception("Conversation is undefined.");
 
-            bool hasConversation = await _userService.HasConversationAsync(userId, conversationGuid);
+            bool hasConversation = await _userService.HasConversationAsync(userId, conversationId);
             if (!hasConversation) throw new AccessViolationException("User is not member of this conversation.");
 
             return conversation;

@@ -30,7 +30,6 @@ namespace back_messenger_signalr.Services.Classess
             int messagesAmount = 25;
 
             var result = await _conversationRepository.GetConversationsByUserIdAsync(userIdInt)
-                .OrderByDescending(m => m.DateCreated)
                 .Take(messagesAmount)
                 .ProjectTo<ConversationViewModel>(_mapper.ConfigurationProvider)
                 .AsNoTracking()
@@ -43,13 +42,13 @@ namespace back_messenger_signalr.Services.Classess
             };
         }
 
-        public async Task<ServiceResponse<ConversationViewModel>> GetConversationByGuidAsync(Guid guid, string userId)
+        public async Task<ServiceResponse<ConversationViewModel>> GetConversationByIdAsync(int id, string userId)
         {
             try
             {
-                await ValidateConversation(guid, userId);
+                await ValidateConversation(id, userId);
 
-                var result = await _conversationRepository.GetConversationByGuidAsync(guid)
+                var result = await _conversationRepository.GetById(id)
                     .ProjectTo<ConversationViewModel>(_mapper.ConfigurationProvider)
                     .AsNoTracking()
                     .SingleOrDefaultAsync();
@@ -99,14 +98,14 @@ namespace back_messenger_signalr.Services.Classess
             }
         }
 
-        private async Task ValidateConversation(Guid conversationGuid, string userId)
+        private async Task ValidateConversation(int conversationId, string userId)
         {
-            var conversation = await _conversationRepository.GetConversationByGuidAsync(conversationGuid)
+            var conversation = await _conversationRepository.GetById(conversationId)
                 .SingleOrDefaultAsync();
 
             if (conversation == null) throw new Exception("Conversation is undefined.");
 
-            bool hasConversation = await _userService.HasConversationAsync(userId, conversationGuid);
+            bool hasConversation = await _userService.HasConversationAsync(userId, conversationId);
             if (!hasConversation) throw new AccessViolationException("User is not member of this conversation.");
         }
 
